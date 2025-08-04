@@ -1,4 +1,4 @@
-import { FaInstagram, FaLinkedin, FaGithub, FaEnvelope } from 'react-icons/fa';
+import { FaInstagram, FaGithub, FaEnvelope } from 'react-icons/fa';
 import Link from 'next/link';
 
 export default function Footer() {
@@ -17,17 +17,34 @@ export default function Footer() {
         <div>
           <h3 className="text-lg font-semibold mb-4 text-white">Site Founders</h3>
           <ul className="space-y-2">
-            <li>Pratham Khurana <FaInstagram className="inline ml-1 text-pink-500" /></li>
-            <li>Shlok Arya <FaInstagram className="inline ml-1 text-pink-500" /></li>
-          </ul>
+  <li>
+    <a 
+      href="https://www.instagram.com/prathamkhurana15" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="hover:text-pink-400 transition-colors"
+    >
+      Pratham Khurana <FaInstagram className="inline ml-1 text-pink-500" />
+    </a>
+  </li>
+  <li>
+    <a 
+      href="https://www.instagram.com/aryashlok42" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="hover:text-pink-400 transition-colors"
+    >
+      Shlok Arya <FaInstagram className="inline ml-1 text-pink-500" />
+    </a>
+  </li>
+</ul>
         </div>
         {/* Connect With Me */}
         <div>
           <h3 className="text-lg font-semibold mb-4 text-white">Connect With Me</h3>
           <div className="flex space-x-4 text-2xl">
-            <a href="#" className="hover:text-blue-400"><FaGithub /></a>
-            <a href="#" className="hover:text-blue-400"><FaLinkedin /></a>
-            <a href="#" className="hover:text-blue-400"><FaEnvelope /></a>
+            <a href="https://github.com/hack422" className="hover:text-blue-400"><FaGithub /></a>
+            <a href="mailto:prathamkhurana2004@gmail.com" className="hover:text-blue-400"><FaEnvelope /></a>
           </div>
         </div>
       </div>

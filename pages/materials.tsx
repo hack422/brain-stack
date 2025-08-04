@@ -3,14 +3,14 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useCallback } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { FaArrowLeft, FaFileAlt, FaVideo, FaDownload, FaEye, FaPlay, FaYoutube, FaTimes } from 'react-icons/fa';
+import { FaArrowLeft, FaFileAlt, FaVideo, FaDownload, FaEye, FaPlay, FaYoutube, FaTimes, FaCalculator, FaClock, FaClipboardList, FaUsers } from 'react-icons/fa';
 
 interface Content {
   _id: string;
   branch: string;
   semester: string;
   subject: string;
-  contentType: 'pyq' | 'notes' | 'video';
+  contentType: 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video';
   fileName?: string;
   fileUrl?: string;
   fileSize?: number;
@@ -80,8 +80,12 @@ const SEMESTERS = [
 ];
 
 const TABS = [
-  { label: 'PYQs', value: 'pyq', icon: <FaFileAlt /> },
   { label: 'Notes', value: 'notes', icon: <FaFileAlt /> },
+  { label: 'PYQs', value: 'pyq', icon: <FaFileAlt /> },
+  { label: 'Formulas', value: 'formulas', icon: <FaCalculator /> },
+  { label: 'Timetable', value: 'timetable', icon: <FaClock /> },
+  { label: 'Assignments', value: 'assignments', icon: <FaClipboardList /> },
+  { label: 'Events', value: 'events', icon: <FaUsers /> },
   { label: 'Video Lectures', value: 'video', icon: <FaVideo /> },
 ];
 
@@ -90,7 +94,7 @@ export default function MaterialsPage() {
   const { type = 'notes' } = router.query;
   const [selectedSemester, setSelectedSemester] = useState<number | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'notes' | 'pyq' | 'video'>('notes');
+  const [activeTab, setActiveTab] = useState<'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video'>('notes');
   const [content, setContent] = useState<Content[]>([]);
   const [loading, setLoading] = useState(false);
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
@@ -101,9 +105,11 @@ export default function MaterialsPage() {
     setSelectedSubject(null);
   };
 
-  // Reset tab if type changes in URL
-  React.useEffect(() => {
-    if (typeof type === 'string') setActiveTab(type as 'notes' | 'pyq' | 'video');
+  // Update active tab when type query parameter changes
+  useEffect(() => {
+    if (type && typeof type === 'string') {
+      setActiveTab(type as 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video');
+    }
   }, [type]);
 
   const fetchContent = useCallback(async () => {
@@ -234,7 +240,7 @@ export default function MaterialsPage() {
                   <button
                     key={tab.value}
                     className={`flex items-center gap-2 px-6 py-2 rounded-lg font-semibold text-lg transition ${activeTab === tab.value ? 'bg-blue-600 text-white' : 'bg-[#23234b] text-gray-300'}`}
-                    onClick={() => setActiveTab(tab.value as 'notes' | 'pyq' | 'video')}
+                    onClick={() => setActiveTab(tab.value as 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video')}
                   >
                     {tab.icon} {tab.label}
                   </button>

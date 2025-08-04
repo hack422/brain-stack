@@ -14,7 +14,6 @@ import ContentManager from '../components/ContentManager';
 export default function AdminPanel() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('upload');
   const [uploadType, setUploadType] = useState<'file' | 'video'>('file');
@@ -60,7 +59,6 @@ export default function AdminPanel() {
         const data = await response.json();
         if (data.user && data.user.isAdmin) {
           setIsAuthenticated(true);
-          setIsAdmin(true);
         } else {
           router.push('/login');
         }
@@ -370,6 +368,10 @@ export default function AdminPanel() {
                       >
                         <option value="notes">Notes</option>
                         <option value="pyq">PYQ</option>
+                        <option value="formulas">Formulas</option>
+                        <option value="timetable">Timetable</option>
+                        <option value="assignments">Assignments</option>
+                        <option value="events">Events</option>
                       </select>
                     </div>
                   )}

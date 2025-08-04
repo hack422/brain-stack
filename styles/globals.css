@@ -3,3 +3,11 @@
 body {
   @apply bg-gradient-to-br from-[#0a0a23] to-[#23234b] text-white font-sans;
 }
+/* In your globals.css */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}

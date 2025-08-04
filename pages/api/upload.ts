@@ -53,8 +53,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'All fields are required' });
     }
     
-    if (!['pyq', 'notes'].includes(contentType[0])) {
-      return res.status(400).json({ error: 'Invalid content type. Must be "pyq" or "notes"' });
+    if (!['notes', 'pyq', 'formulas', 'timetable', 'assignments', 'events'].includes(contentType[0])) {
+      return res.status(400).json({ error: 'Invalid content type. Must be one of: notes, pyq, formulas, timetable, assignments, events' });
     }
     
     // Create folder structure

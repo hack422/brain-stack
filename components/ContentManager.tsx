@@ -6,7 +6,7 @@ interface Content {
   branch: string;
   semester: string;
   subject: string;
-  contentType: 'pyq' | 'notes' | 'video';
+  contentType: 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video';
   fileName?: string;
   fileUrl?: string;
   fileSize?: number;
@@ -26,6 +26,17 @@ export default function ContentManager() {
     subject: '',
     contentType: ''
   });
+
+  const contentTypeOptions = [
+    { value: '', label: 'All Types' },
+    { value: 'notes', label: 'Notes' },
+    { value: 'pyq', label: 'PYQ' },
+    { value: 'formulas', label: 'Formulas' },
+    { value: 'timetable', label: 'Timetable' },
+    { value: 'assignments', label: 'Assignments' },
+    { value: 'events', label: 'Events' },
+    { value: 'video', label: 'Video' }
+  ];
 
   const fetchContents = useCallback(async () => {
     try {
@@ -104,17 +115,17 @@ export default function ContentManager() {
         <select
           value={filter.branch}
           onChange={(e) => setFilter({ ...filter, branch: e.target.value })}
-          className="px-4 py-2 bg-[#23234b] border border-blue-900/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-2 bg-[#23234b] border border-blue-900/50 rounded-lg text-white"
         >
           <option value="">All Branches</option>
           <option value="cse">CSE</option>
           <option value="cse-aiml">CSE-AIML</option>
         </select>
-
+        
         <select
           value={filter.semester}
           onChange={(e) => setFilter({ ...filter, semester: e.target.value })}
-          className="px-4 py-2 bg-[#23234b] border border-blue-900/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-2 bg-[#23234b] border border-blue-900/50 rounded-lg text-white"
         >
           <option value="">All Semesters</option>
           <option value="1">Semester 1</option>
@@ -124,24 +135,25 @@ export default function ContentManager() {
           <option value="5">Semester 5</option>
           <option value="6">Semester 6</option>
         </select>
-
+        
         <select
           value={filter.contentType}
           onChange={(e) => setFilter({ ...filter, contentType: e.target.value })}
-          className="px-4 py-2 bg-[#23234b] border border-blue-900/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-2 bg-[#23234b] border border-blue-900/50 rounded-lg text-white"
         >
-          <option value="">All Types</option>
-          <option value="pyq">PYQ</option>
-          <option value="notes">Notes</option>
-          <option value="video">Video</option>
+          {contentTypeOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
-
+        
         <input
           type="text"
           placeholder="Filter by subject..."
           value={filter.subject}
           onChange={(e) => setFilter({ ...filter, subject: e.target.value })}
-          className="px-4 py-2 bg-[#23234b] border border-blue-900/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-2 bg-[#23234b] border border-blue-900/50 rounded-lg text-white"
         />
       </div>
 

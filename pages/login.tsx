@@ -1,13 +1,20 @@
 import Head from 'next/head';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { FaGoogle } from 'react-icons/fa';
 
 export default function Login() {
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     // Check if user is already authenticated
+    if (!isClient || !router.isReady) return;
+    
     const checkAuth = async () => {
       try {
         const response = await fetch('/api/auth/check', {
@@ -22,11 +29,20 @@ export default function Login() {
     };
 
     checkAuth();
-  }, [router]);
+  }, [router, isClient]);
 
   const handleGoogleLogin = () => {
     window.location.href = '/api/auth/google';
   };
+
+  // Don't render the component until client-side
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a23] to-[#23234b] flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <>

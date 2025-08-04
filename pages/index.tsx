@@ -1,10 +1,94 @@
 import Head from 'next/head';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { FaTelegramPlane, FaGithub, FaLinkedin, FaEnvelope, FaLightbulb, FaCode, FaUserShield, FaUsers, FaCogs, FaDatabase, FaCloud } from 'react-icons/fa';
+import { FaRegComments, FaBrain, FaSyncAlt,FaTelegramPlane, FaGithub, FaEnvelope, FaLightbulb, FaCode, FaUserShield, FaUsers, FaCogs, FaBook, FaCalculator, FaClock, FaClipboardList, FaUsers as FaEvents } from 'react-icons/fa';
 import { MdSecurity } from 'react-icons/md';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+
+
+// --- Data for your skills (Best Practice) ---
+const handleNavClick = (sectionId: string) => {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    element.scrollIntoView({ 
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }
+  // setMenuOpen(false);
+};
+
+const technicalSkills = [
+  {
+    icon: <FaCode className="text-blue-400" />,
+    title: 'Programming Languages',
+    skills: ['Python', 'HTML', 'JavaScript', 'SQL', 'C++']
+  },
+  {
+    icon: <FaCogs className="text-blue-400" />,
+    title: 'Web Development',
+    skills: ['HTML', 'CSS', 'JavaScript', 'React', 'Node.js', 'Express.js']
+  },
+  {
+    icon: <FaTelegramPlane className="text-blue-400" />,
+    title: 'Telegram Bot Development',
+    skills: ['Telegram Bot API', 'python-telegram-bot', 'Webhook Integration', 'Bot Framework']
+  },
+  {
+    icon: <MdSecurity className="text-blue-400" />,
+    title: 'Security & Penetration Testing',
+    skills: ['Kali Linux', 'Penetration Testing', 'Security Auditing', 'Ethical Hacking']
+  }
+];
+
+const softSkills = [
+  {
+    icon: <FaRegComments className="text-blue-400" />,
+    title: 'Communication',
+    description: 'Clearly expressing ideas, actively listening, and adapting your message to your audience.'
+  },
+  {
+    icon: <FaUsers className="text-blue-400" />,
+    title: 'Teamwork',
+    description: 'Collaborating well with others, being supportive, and contributing to a positive group dynamic.'
+  },
+  {
+    icon: <FaBrain className="text-blue-400" />,
+    title: 'Problem-Solving',
+    description: 'Thinking critically and creatively to overcome obstacles and find effective solutions.'
+  },
+  {
+    icon: <FaSyncAlt className="text-blue-400" />,
+    title: 'Adaptability',
+    description: 'Staying flexible and open-minded in the face of change or uncertainty.'
+  }
+];
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState('technical');
+  const [showOthersDropdown, setShowOthersDropdown] = useState(false);
+
+  // Define styles for active and inactive buttons to keep JSX clean
+  const activeButtonStyle = "bg-blue-700 text-white";
+  const inactiveButtonStyle = "bg-[#181828] text-gray-400 hover:bg-[#2a2a3c]";
+  const commonButtonStyle = "px-4 py-2 rounded-full font-semibold transition-colors duration-200";
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.dropdown-container')) {
+        setShowOthersDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       <Head>
@@ -25,20 +109,96 @@ export default function Home() {
             </div>
             <div className="text-gray-400 mb-8">Building Next-Gen Tech Solutions with Modern Technologies</div>
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
-              <button className="bg-blue-600 hover:bg-blue-700 px-6 py-2 text-white rounded font-semibold shadow">View Projects</button>
-              <button className="bg-white border border-gray-300 hover:bg-gray-100 px-6 py-2 text-gray-900 rounded font-semibold shadow">Download PDF</button>
+              <button onClick={() => handleNavClick('projects')} className="bg-blue-600 hover:bg-blue-700 px-6 py-2 text-white rounded font-semibold shadow">View Projects</button>
+              <Link href="/materials" className="bg-white border border-gray-300 hover:bg-gray-100 px-6 py-2 text-gray-900 rounded font-semibold shadow">Download PDF</Link>
             </div>
             <div className="flex space-x-4 text-2xl text-gray-300">
-              <a href="#" className="hover:text-blue-400"><FaTelegramPlane /></a>
-              <a href="#" className="hover:text-blue-400"><FaGithub /></a>
-              <a href="#" className="hover:text-blue-400"><FaLinkedin /></a>
-              <a href="#" className="hover:text-blue-400"><FaEnvelope /></a>
+              <a href="https://t.me/Official_pratham_1" className="hover:text-blue-400"><FaTelegramPlane /></a>
+              <a href="https://github.com/hack422" className="hover:text-blue-400"><FaGithub /></a>
+              <a href="https://mail.google.com/mail/?view=cm&fs=1&to=parathamkhurana568@gmail.com"
+                target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline"><FaEnvelope /></a>
             </div>
           </div>
           {/* Right: Logo */}
           <div className="flex-1 flex justify-center mt-10 md:mt-0">
             <div className="bg-white rounded-full shadow-lg flex items-center justify-center w-64 h-64">
               <img src="/bstack.png" alt="Brainstack Education" className="w-48 h-48 object-contain" />
+            </div>
+          </div>
+        </section>
+
+        {/* Study Section */}
+        <section id="study" className="min-h-screen flex flex-col justify-center bg-gradient-to-b from-[#181828] to-[#23234b] py-24 px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-5xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Study Smart,<br />
+              Achieve More
+            </h1>
+            <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+              Access comprehensive study materials, Formulas, and expert-curated content to excel in your academics.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              {/* Study Notes Button */}
+              <Link 
+                href="/materials" 
+                className="flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold shadow-lg transition-colors duration-200"
+              >
+                <FaBook className="text-white" size={20} />
+                Study Notes
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+
+              {/* Others Button with Dropdown */}
+              <div className="relative dropdown-container">
+                <button
+                  onClick={() => setShowOthersDropdown(!showOthersDropdown)}
+                  className="flex items-center gap-3 bg-gray-800 hover:bg-gray-700 text-white px-8 py-4 rounded-lg font-semibold shadow-lg transition-colors duration-200"
+                >
+                  Others
+                  <svg className={`w-5 h-5 transition-transform duration-200 ${showOthersDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Dropdown Menu */}
+                {showOthersDropdown && (
+                  <div className="absolute top-full left-0 mt-2 w-64 bg-gray-800 rounded-lg shadow-xl border border-gray-700 z-50 dropdown-container">
+                    <div className="py-2">
+                      <Link href="/materials?type=formulas" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 transition-colors">
+                        <FaCalculator className="text-green-400" size={20} />
+                        <div className="text-left">
+                          <div className="font-semibold text-white">Formulas</div>
+                          <div className="text-sm text-gray-400">Important Formulas</div>
+                        </div>
+                      </Link>
+                      <Link href="/materials?type=timetable" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 transition-colors">
+                        <FaClock className="text-purple-400" size={20} />
+                        <div className="text-left">
+                          <div className="font-semibold text-white">Timetable</div>
+                          <div className="text-sm text-gray-400">Class Schedule</div>
+                        </div>
+                      </Link>
+                      <Link href="/materials?type=assignments" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 transition-colors">
+                        <FaClipboardList className="text-orange-400" size={20} />
+                        <div className="text-left">
+                          <div className="font-semibold text-white">Assignments</div>
+                          <div className="text-sm text-gray-400">Assignment Portal</div>
+                        </div>
+                      </Link>
+                      <Link href="/materials?type=events" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 transition-colors">
+                        <FaEvents className="text-pink-400" size={20} />
+                        <div className="text-left">
+                          <div className="font-semibold text-white">Events</div>
+                          <div className="text-sm text-gray-400">Campus Events</div>
+                        </div>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </section>
@@ -88,78 +248,59 @@ export default function Home() {
 
         {/* Skills Section */}
         <section id="skills" className="min-h-screen flex flex-col justify-center bg-gradient-to-b from-[#23234b] to-[#181828] py-24 px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex flex-col items-center">
-              <span className="inline-block bg-blue-900 text-blue-300 px-4 py-1 rounded-full text-sm font-semibold mb-4">My Expertise</span>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-2 text-center">Skills & Competencies</h2>
-              <div className="w-32 h-1 bg-blue-500 rounded-full mb-8"></div>
-              <div className="flex gap-4 mb-8">
-                <button className="bg-blue-700 text-white px-4 py-1 rounded-full font-semibold">&lt;/&gt; Technical Skills</button>
-                <button className="bg-[#181828] text-gray-400 px-4 py-1 rounded-full font-semibold">&#128104;&#8205;&#128187; Soft Skills</button>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-[#181828] rounded-lg p-4">
-                <div className="font-semibold text-white mb-2 flex items-center gap-2"><FaCode className="text-blue-400" /> Programming Languages</div>
-                <div className="flex flex-wrap gap-2">
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">Python</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">HTML</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">JavaScript</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">SQL</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">C++</span>
-                </div>
-              </div>
-              <div className="bg-[#181828] rounded-lg p-4">
-                <div className="font-semibold text-white mb-2 flex items-center gap-2"><FaTelegramPlane className="text-blue-400" /> Telegram Bot Development</div>
-                <div className="flex flex-wrap gap-2">
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">Telegram Bot API</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">python-telegram-bot</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">Webhook Integration</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">Bot Framework</span>
-                </div>
-              </div>
-              <div className="bg-[#181828] rounded-lg p-4">
-                <div className="font-semibold text-white mb-2 flex items-center gap-2"><MdSecurity className="text-blue-400" /> Security & Penetration Testing</div>
-                <div className="flex flex-wrap gap-2">
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">KALI LINUX</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">Penetration Testing</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">Security Auditing</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">Ethical Hacking</span>
-                </div>
-              </div>
-              <div className="bg-[#181828] rounded-lg p-4">
-                <div className="font-semibold text-white mb-2 flex items-center gap-2"><FaCogs className="text-blue-400" /> Web Development</div>
-                <div className="flex flex-wrap gap-2">
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">HTML</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">CSS</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">JavaScript</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">React</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">Node.js</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">Express.js</span>
-                </div>
-              </div>
-              <div className="bg-[#181828] rounded-lg p-4">
-                <div className="font-semibold text-white mb-2 flex items-center gap-2"><FaDatabase className="text-blue-400" /> Database Management</div>
-                <div className="flex flex-wrap gap-2">
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">MySQL</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">MongoDB</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">Firebase</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">SQL</span>
-                </div>
-              </div>
-              <div className="bg-[#181828] rounded-lg p-4">
-                <div className="font-semibold text-white mb-2 flex items-center gap-2"><FaCloud className="text-blue-400" /> Cloud & DevOps</div>
-                <div className="flex flex-wrap gap-2">
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">AWS</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">Firebase</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">Docker</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">Git</span>
-                  <span className="bg-blue-900 text-blue-300 px-3 py-1 rounded-full text-xs">GitHub</span>
-                </div>
-              </div>
-            </div>
+      <div className="max-w-6xl mx-auto">
+        <div className="flex flex-col items-center">
+          <span className="inline-block bg-blue-900 text-blue-300 px-4 py-1 rounded-full text-sm font-semibold mb-4">My Expertise</span>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-2 text-center">Skills & Competencies</h2>
+          <div className="w-32 h-1 bg-blue-500 rounded-full mb-8"></div>
+          
+          {/* 2. Add onClick handlers and dynamic classNames to buttons */}
+          <div className="flex gap-4 mb-8">
+            <button
+              onClick={() => setActiveTab('technical')}
+              className={`${commonButtonStyle} ${activeTab === 'technical' ? activeButtonStyle : inactiveButtonStyle}`}
+            >
+              &lt;/&gt; Technical Skills
+            </button>
+            <button
+              onClick={() => setActiveTab('soft')}
+              className={`${commonButtonStyle} ${activeTab === 'soft' ? activeButtonStyle : inactiveButtonStyle}`}
+            >
+              &#128104;&#8205;&#128187; Soft Skills
+            </button>
           </div>
-        </section>
+        </div>
+
+        {/* 3. Conditionally render content based on the activeTab state */}
+        <div>
+          {activeTab === 'technical' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+              {technicalSkills.map((category) => (
+                <div key={category.title} className="bg-[#181828] rounded-lg p-6 shadow-lg border border-white/10">
+                  <div className="font-semibold text-white mb-4 flex items-center gap-3 text-lg">{category.icon} {category.title}</div>
+                  <div className="flex flex-wrap gap-2">
+                    {category.skills.map((skill) => (
+                      <span key={skill} className="bg-blue-900/50 text-blue-300 px-3 py-1 rounded-full text-xs font-medium">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
+              {softSkills.map((skill) => (
+                <div key={skill.title} className="bg-[#181828] rounded-lg p-6 shadow-lg border border-white/10">
+                  <div className="font-semibold text-white mb-3 flex items-center gap-3 text-lg">{skill.icon} {skill.title}</div>
+                  <p className="text-gray-400 text-sm">{skill.description}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
 
         {/* Projects Section */}
         <section id="projects" className="min-h-screen flex flex-col justify-center bg-gradient-to-b from-[#181828] to-[#23234b] py-24 px-4">

@@ -58,9 +58,7 @@ const UserSchema: Schema<IUser> = new Schema({
   }
 });
 
-// Index for faster queries
-UserSchema.index({ email: 1 });
-UserSchema.index({ googleId: 1 });
+// Only create index for isAdmin since email and googleId already have unique constraints
 UserSchema.index({ isAdmin: 1 });
 
 export default mongoose.models.User || mongoose.model<IUser>("User", UserSchema);

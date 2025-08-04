@@ -57,12 +57,17 @@ export default function Navbar() {
   };
 
   const handleNavClick = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
+    // If we're on the materials page, navigate to home first
+    if (router.pathname !== '/') {
+      router.push(`/#${sectionId}`);
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
     }
     setMenuOpen(false);
   };
@@ -76,7 +81,7 @@ export default function Navbar() {
       <nav className="bg-gradient-to-r from-[#0a0a23] to-[#23234b] text-white px-8 py-4 sticky top-0 z-50 shadow-md">
         <div className="flex justify-between items-center max-w-7xl mx-auto">
           <span className="text-2xl font-bold select-none">
-            Pratham <span className="text-blue-400">Khurana</span>
+            Brain <span className="text-blue-400">Stack</span>
           </span>
           <button className="md:hidden" onClick={() => setMenuOpen(!menuOpen)}>
             ☰
@@ -106,7 +111,6 @@ export default function Navbar() {
             >
               Projects
             </button>
-            <Link href="/materials?type=pyq" className="hover:text-blue-400 transition">PYQs</Link>
             <Link href="/materials?type=video" className="flex items-center gap-1 hover:text-blue-400 transition"><FaVideo className="inline-block" /> Video Notes</Link>
             <Link href="/materials?type=notes" className="flex items-center gap-1 hover:text-blue-400 transition"><FaRegStickyNote className="inline-block" /> Notes</Link>
             
@@ -224,8 +228,8 @@ export default function Navbar() {
               >
                 Projects
               </button>
-              <Link href="/materials?type=pyq" className="text-center py-2 hover:text-blue-400 transition">PYQs</Link>
-              <Link href="/materials?type=video" className="flex items-center justify-center gap-2 py-2 hover:text-blue-400 transition">
+              <Link href="/materials?type=video" className="text-center py-2 hover:text-blue-400 transition">Video Notes</Link>
+              <Link href="/materials?type=notes" className="flex items-center justify-center gap-2 py-2 hover:text-blue-400 transition">
                 <FaVideo className="inline-block" /> Video Notes
               </Link>
               <Link href="/materials?type=notes" className="flex items-center justify-center gap-2 py-2 hover:text-blue-400 transition">
