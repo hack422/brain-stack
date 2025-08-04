@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://pratham-khurana.vercel.app/sitemap.xml
+
+# Disallow admin and API routes
+Disallow: /admin
+Disallow: /api/
+Disallow: /login
+Disallow: /verify-otp
+
+# Allow important pages
+Allow: /
+Allow: /materials 

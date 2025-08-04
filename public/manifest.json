@@ -1,0 +1,27 @@
+{
+  "name": "Brain Stack - Smart Education Platform",
+  "short_name": "Brain Stack",
+  "description": "Smart education platform providing study materials, formulas, and academic resources",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a23",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/bstack.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/bstack.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
+} 

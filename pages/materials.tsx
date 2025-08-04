@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { useState, useEffect, useCallback } from 'react';
+import Head from 'next/head';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { FaArrowLeft, FaFileAlt, FaVideo, FaDownload, FaEye, FaPlay, FaYoutube, FaTimes, FaCalculator, FaClock, FaClipboardList, FaUsers } from 'react-icons/fa';
@@ -174,6 +175,62 @@ export default function MaterialsPage() {
 
   return (
     <>
+      <Head>
+        <title>Study Materials - Brain Stack | Notes, Formulas, Timetables & More</title>
+        <meta name="description" content="Access comprehensive study materials including notes, formulas, timetables, assignments, and events for all semesters. Smart education resources for students." />
+        <meta name="keywords" content="study materials, notes, formulas, timetable, assignments, events, education resources, student materials" />
+        <meta name="author" content="Brain Stack" />
+        <meta name="robots" content="index, follow" />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://pratham-khurana.vercel.app/materials" />
+        <meta property="og:title" content="Study Materials - Brain Stack" />
+        <meta property="og:description" content="Access comprehensive study materials including notes, formulas, timetables, assignments, and events for all semesters." />
+        <meta property="og:image" content="https://pratham-khurana.vercel.app/bstack.png" />
+        
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://pratham-khurana.vercel.app/materials" />
+        <meta property="twitter:title" content="Study Materials - Brain Stack" />
+        <meta property="twitter:description" content="Access comprehensive study materials including notes, formulas, timetables, assignments, and events." />
+        <meta property="twitter:image" content="https://pratham-khurana.vercel.app/bstack.png" />
+        
+        {/* Additional SEO */}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="canonical" href="https://pratham-khurana.vercel.app/materials" />
+        
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebPage",
+              "name": "Study Materials - Brain Stack",
+              "description": "Comprehensive study materials including notes, formulas, timetables, assignments, and events",
+              "url": "https://pratham-khurana.vercel.app/materials",
+              "breadcrumb": {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://pratham-khurana.vercel.app/"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Study Materials",
+                    "item": "https://pratham-khurana.vercel.app/materials"
+                  }
+                ]
+              }
+            })
+          }}
+        />
+      </Head>
       <Navbar />
       <main className="min-h-screen bg-gradient-to-br from-[#0a0a23] to-[#23234b] px-4 py-10">
         <div className="max-w-6xl mx-auto">

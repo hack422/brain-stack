@@ -92,7 +92,49 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Brainstack Education</title>
+        <title>Brain Stack - Smart Education Platform | Study Notes, Formulas & More</title>
+        <meta name="description" content="Access comprehensive study materials, formulas, timetables, assignments, and events. Smart education platform for students to excel in academics." />
+        <meta name="keywords" content="study notes, formulas, timetable, assignments, education, student resources, academic materials" />
+        <meta name="author" content="Brain Stack" />
+        <meta name="robots" content="index, follow" />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://pratham-khurana.vercel.app/" />
+        <meta property="og:title" content="Brain Stack - Smart Education Platform" />
+        <meta property="og:description" content="Access comprehensive study materials, formulas, timetables, assignments, and events. Smart education platform for students." />
+        <meta property="og:image" content="https://pratham-khurana.vercel.app/bstack.png" />
+        
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://pratham-khurana.vercel.app/" />
+        <meta property="twitter:title" content="Brain Stack - Smart Education Platform" />
+        <meta property="twitter:description" content="Access comprehensive study materials, formulas, timetables, assignments, and events." />
+        <meta property="twitter:image" content="https://pratham-khurana.vercel.app/bstack.png" />
+        
+        {/* Additional SEO */}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="canonical" href="https://pratham-khurana.vercel.app/" />
+        <link rel="icon" href="/favicon.ico" />
+        
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "EducationalOrganization",
+              "name": "Brain Stack",
+              "description": "Smart education platform providing study materials, formulas, and academic resources",
+              "url": "https://pratham-khurana.vercel.app",
+              "logo": "https://pratham-khurana.vercel.app/bstack.png",
+              "sameAs": [
+                "https://t.me/your-telegram",
+                "https://github.com/your-github"
+              ]
+            })
+          }}
+        />
       </Head>
       <Navbar />
       <main className="min-h-screen bg-gradient-to-br from-[#0a0a23] to-[#23234b] flex flex-col justify-center">
