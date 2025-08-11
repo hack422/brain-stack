@@ -22,7 +22,7 @@ export default function AdminPanel() {
     branch: '',
     semester: '',
     subject: '',
-    contentType: 'notes' as 'notes' | 'pyq',
+    contentType: 'notes' as 'notes' | 'pyq' | 'ebook' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video',
     file: null as File | null,
     videoTitle: '',
     videoUrl: ''
@@ -368,6 +368,7 @@ export default function AdminPanel() {
                       >
                         <option value="notes">Notes</option>
                         <option value="pyq">PYQ</option>
+                        <option value="ebook">E-Books</option>
                         <option value="formulas">Formulas</option>
                         <option value="timetable">Timetable</option>
                         <option value="assignments">Assignments</option>

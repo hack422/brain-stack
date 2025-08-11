@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FaRegStickyNote, FaVideo, FaCog, FaSignOutAlt } from 'react-icons/fa';
+import { FaRegStickyNote, FaVideo, FaCog, FaSignOutAlt, FaBook } from 'react-icons/fa';
 
 interface User {
   id: string;
@@ -112,6 +112,7 @@ export default function Navbar() {
               Projects
             </button>
             <Link href="/materials?type=video" className="flex items-center gap-1 hover:text-blue-400 transition"><FaVideo className="inline-block" /> Video Notes</Link>
+            <Link href="/materials?type=ebook" className="flex items-center gap-1 hover:text-blue-400 transition"><FaBook className="inline-block" /> E-Books</Link>
             <Link href="/materials?type=notes" className="flex items-center gap-1 hover:text-blue-400 transition"><FaRegStickyNote className="inline-block" /> Notes</Link>
             
             {isAuthenticated && user ? (
@@ -229,8 +230,8 @@ export default function Navbar() {
                 Projects
               </button>
               <Link href="/materials?type=video" className="text-center py-2 hover:text-blue-400 transition">Video Notes</Link>
-              <Link href="/materials?type=notes" className="flex items-center justify-center gap-2 py-2 hover:text-blue-400 transition">
-                <FaVideo className="inline-block" /> Video Notes
+              <Link href="/materials?type=ebook" className="flex items-center justify-center gap-2 py-2 hover:text-blue-400 transition">
+                <FaBook className="inline-block" /> E-Books
               </Link>
               <Link href="/materials?type=notes" className="flex items-center justify-center gap-2 py-2 hover:text-blue-400 transition">
                 <FaRegStickyNote className="inline-block" /> Notes

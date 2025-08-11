@@ -5,7 +5,7 @@ const Sitemap = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://pratham-khurana.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://brainstackeducation.in';
   
   const pages = [
     '',

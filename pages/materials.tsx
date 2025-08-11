@@ -4,14 +4,14 @@ import { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { FaArrowLeft, FaFileAlt, FaVideo, FaDownload, FaEye, FaPlay, FaYoutube, FaTimes, FaCalculator, FaClock, FaClipboardList, FaUsers } from 'react-icons/fa';
+import { FaArrowLeft, FaFileAlt, FaVideo, FaDownload, FaEye, FaPlay, FaYoutube, FaTimes, FaCalculator, FaClock, FaClipboardList, FaUsers, FaBook } from 'react-icons/fa';
 
 interface Content {
   _id: string;
   branch: string;
   semester: string;
   subject: string;
-  contentType: 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video';
+  contentType: 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video' | 'ebook';
   fileName?: string;
   fileUrl?: string;
   fileSize?: number;
@@ -83,6 +83,7 @@ const SEMESTERS = [
 const TABS = [
   { label: 'Notes', value: 'notes', icon: <FaFileAlt /> },
   { label: 'PYQs', value: 'pyq', icon: <FaFileAlt /> },
+  { label: 'E-Books', value: 'ebook', icon: <FaBook /> },
   { label: 'Formulas', value: 'formulas', icon: <FaCalculator /> },
   { label: 'Timetable', value: 'timetable', icon: <FaClock /> },
   { label: 'Assignments', value: 'assignments', icon: <FaClipboardList /> },
@@ -95,7 +96,7 @@ export default function MaterialsPage() {
   const { type = 'notes' } = router.query;
   const [selectedSemester, setSelectedSemester] = useState<number | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video'>('notes');
+  const [activeTab, setActiveTab] = useState<'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video' | 'ebook'>('notes');
   const [content, setContent] = useState<Content[]>([]);
   const [loading, setLoading] = useState(false);
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
@@ -109,7 +110,7 @@ export default function MaterialsPage() {
   // Update active tab when type query parameter changes
   useEffect(() => {
     if (type && typeof type === 'string') {
-      setActiveTab(type as 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video');
+      setActiveTab(type as 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video' | 'ebook');
     }
   }, [type]);
 
@@ -184,21 +185,21 @@ export default function MaterialsPage() {
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://pratham-khurana.vercel.app/materials" />
-        <meta property="og:title" content="Study Materials - Brain Stack" />
-        <meta property="og:description" content="Access comprehensive study materials including notes, formulas, timetables, assignments, and events for all semesters." />
-        <meta property="og:image" content="https://pratham-khurana.vercel.app/bstack.png" />
-        
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://pratham-khurana.vercel.app/materials" />
-        <meta property="twitter:title" content="Study Materials - Brain Stack" />
-        <meta property="twitter:description" content="Access comprehensive study materials including notes, formulas, timetables, assignments, and events." />
-        <meta property="twitter:image" content="https://pratham-khurana.vercel.app/bstack.png" />
-        
-        {/* Additional SEO */}
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="canonical" href="https://pratham-khurana.vercel.app/materials" />
+                 <meta property="og:url" content="https://brainstackeducation.in/materials" />
+         <meta property="og:title" content="Study Materials - Brain Stack" />
+         <meta property="og:description" content="Access comprehensive study materials including notes, formulas, timetables, assignments, and events for all semesters." />
+         <meta property="og:image" content="https://brainstackeducation.in/bstack.png" />
+         
+         {/* Twitter */}
+         <meta property="twitter:card" content="summary_large_image" />
+         <meta property="twitter:url" content="https://brainstackeducation.in/materials" />
+         <meta property="twitter:title" content="Study Materials - Brain Stack" />
+         <meta property="twitter:description" content="Access comprehensive study materials including notes, formulas, timetables, assignments, and events." />
+         <meta property="twitter:image" content="https://brainstackeducation.in/bstack.png" />
+         
+         {/* Additional SEO */}
+         <meta name="viewport" content="width=device-width, initial-scale=1" />
+         <link rel="canonical" href="https://brainstackeducation.in/materials" />
         
         {/* Structured Data */}
         <script
@@ -209,24 +210,24 @@ export default function MaterialsPage() {
               "@type": "WebPage",
               "name": "Study Materials - Brain Stack",
               "description": "Comprehensive study materials including notes, formulas, timetables, assignments, and events",
-              "url": "https://pratham-khurana.vercel.app/materials",
-              "breadcrumb": {
-                "@type": "BreadcrumbList",
-                "itemListElement": [
-                  {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "Home",
-                    "item": "https://pratham-khurana.vercel.app/"
-                  },
-                  {
-                    "@type": "ListItem",
-                    "position": 2,
-                    "name": "Study Materials",
-                    "item": "https://pratham-khurana.vercel.app/materials"
-                  }
-                ]
-              }
+                             "url": "https://brainstackeducation.in/materials",
+               "breadcrumb": {
+                 "@type": "BreadcrumbList",
+                 "itemListElement": [
+                   {
+                     "@type": "ListItem",
+                     "position": 1,
+                     "name": "Home",
+                     "item": "https://brainstackeducation.in/"
+                   },
+                   {
+                     "@type": "ListItem",
+                     "position": 2,
+                     "name": "Study Materials",
+                     "item": "https://brainstackeducation.in/materials"
+                   }
+                 ]
+               }
             })
           }}
         />
@@ -297,7 +298,7 @@ export default function MaterialsPage() {
                   <button
                     key={tab.value}
                     className={`flex items-center gap-2 px-6 py-2 rounded-lg font-semibold text-lg transition ${activeTab === tab.value ? 'bg-blue-600 text-white' : 'bg-[#23234b] text-gray-300'}`}
-                    onClick={() => setActiveTab(tab.value as 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video')}
+                                         onClick={() => setActiveTab(tab.value as 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video' | 'ebook')}
                   >
                     {tab.icon} {tab.label}
                   </button>

@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { FaRegComments, FaBrain, FaSyncAlt, FaTelegramPlane, FaLightbulb, FaCode, FaUserShield, FaUsers, FaCogs, FaBook, FaCalculator, FaClock, FaClipboardList, FaUsers as FaEvents } from 'react-icons/fa';
+import { FaSteam,FaRegComments, FaBrain, FaSyncAlt, FaTelegramPlane, FaLightbulb, FaCode, FaUserShield, FaUsers, FaCogs, FaBook, FaCalculator, FaClock, FaClipboardList, FaUsers as FaEvents } from 'react-icons/fa';
 import { MdSecurity } from 'react-icons/md';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -90,21 +90,21 @@ export default function Home() {
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://pratham-khurana.vercel.app/" />
-        <meta property="og:title" content="Brain Stack - Smart Education Platform" />
-        <meta property="og:description" content="Access comprehensive study materials, formulas, timetables, assignments, and events. Smart education platform for students." />
-        <meta property="og:image" content="https://pratham-khurana.vercel.app/bstack.png" />
-        
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://pratham-khurana.vercel.app/" />
-        <meta property="twitter:title" content="Brain Stack - Smart Education Platform" />
-        <meta property="twitter:description" content="Access comprehensive study materials, formulas, timetables, assignments, and events." />
-        <meta property="twitter:image" content="https://pratham-khurana.vercel.app/bstack.png" />
-        
-        {/* Additional SEO */}
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="canonical" href="https://pratham-khurana.vercel.app/" />
+                 <meta property="og:url" content="https://brainstackeducation.in/" />
+         <meta property="og:title" content="Brain Stack - Smart Education Platform" />
+         <meta property="og:description" content="Access comprehensive study materials, formulas, timetables, assignments, and events. Smart education platform for students." />
+         <meta property="og:image" content="https://brainstackeducation.in/bstack.png" />
+         
+         {/* Twitter */}
+         <meta property="twitter:card" content="summary_large_image" />
+         <meta property="twitter:url" content="https://brainstackeducation.in/" />
+         <meta property="twitter:title" content="Brain Stack - Smart Education Platform" />
+         <meta property="twitter:description" content="Access comprehensive study materials, formulas, timetables, assignments, and events." />
+         <meta property="twitter:image" content="https://brainstackeducation.in/bstack.png" />
+         
+         {/* Additional SEO */}
+         <meta name="viewport" content="width=device-width, initial-scale=1" />
+         <link rel="canonical" href="https://brainstackeducation.in/" />
         <link rel="icon" href="/favicon.ico" />
         
         {/* Structured Data */}
@@ -116,8 +116,8 @@ export default function Home() {
               "@type": "EducationalOrganization",
               "name": "Brain Stack",
               "description": "Smart education platform providing study materials, formulas, and academic resources",
-              "url": "https://pratham-khurana.vercel.app",
-              "logo": "https://pratham-khurana.vercel.app/bstack.png",
+                             "url": "https://brainstackeducation.in",
+               "logo": "https://brainstackeducation.in/bstack.png",
               "sameAs": [
                 "https://t.me/your-telegram",
                 "https://github.com/your-github"
@@ -169,6 +169,20 @@ export default function Home() {
                  {showOthersDropdown && (
                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 lg:left-0 lg:transform-none mt-2 w-64 bg-gray-800 rounded-lg shadow-xl border border-gray-700 z-50 dropdown-container">
                      <div className="py-2">
+                       <Link href="/materials?type=pyq" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 transition-colors">
+                         <FaSteam className="text-blue-400" size={20} />
+                         <div className="text-left">
+                           <div className="font-semibold text-white">PYQs</div>
+                           <div className="text-sm text-gray-400">Previous Year Questions</div>
+                         </div>
+                       </Link>
+                       <Link href="/materials?type=ebook" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 transition-colors">
+                         <FaBook className="text-yellow-400" size={20} />
+                         <div className="text-left">
+                           <div className="font-semibold text-white">E-Books</div>
+                           <div className="text-sm text-gray-400">Digital Books</div>
+                         </div>
+                       </Link>
                        <Link href="/materials?type=formulas" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 transition-colors">
                          <FaCalculator className="text-green-400" size={20} />
                          <div className="text-left">

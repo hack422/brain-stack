@@ -4,7 +4,7 @@ interface IContent extends Document {
   branch: string;
   semester: string;
   subject: string;
-  contentType: 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video';
+  contentType: 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video' | 'ebook';
   fileName?: string;
   fileUrl?: string;
   publicId?: string;
@@ -24,7 +24,7 @@ const ContentSchema: Schema<IContent> = new Schema({
   contentType: { 
     type: String, 
     required: true, 
-    enum: ['notes', 'pyq', 'formulas', 'timetable', 'assignments', 'events', 'video'],
+    enum: ['notes', 'pyq', 'formulas', 'timetable', 'assignments', 'events', 'video', 'ebook'],
     default: 'notes'
   },
   fileName: { type: String },

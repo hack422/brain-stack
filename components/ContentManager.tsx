@@ -6,7 +6,7 @@ interface Content {
   branch: string;
   semester: string;
   subject: string;
-  contentType: 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video';
+  contentType: 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video' | 'ebook';
   fileName?: string;
   fileUrl?: string;
   fileSize?: number;
@@ -31,6 +31,7 @@ export default function ContentManager() {
     { value: '', label: 'All Types' },
     { value: 'notes', label: 'Notes' },
     { value: 'pyq', label: 'PYQ' },
+    { value: 'ebook', label: 'E-Books' },
     { value: 'formulas', label: 'Formulas' },
     { value: 'timetable', label: 'Timetable' },
     { value: 'assignments', label: 'Assignments' },
