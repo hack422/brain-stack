@@ -3,7 +3,7 @@ import { OAuth2Client } from 'google-auth-library';
 // Google OAuth configuration
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
-export const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || `https://b-stack-seven.vercel.app/api/auth/google/callback`;
+export const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
 
 // Create OAuth2 client
 export const oauth2Client = new OAuth2Client(

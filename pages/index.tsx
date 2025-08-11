@@ -90,21 +90,21 @@ export default function Home() {
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-                 <meta property="og:url" content="https://brainstackeducation.in/" />
+                 <meta property="og:url" content="http://brainstackeducation.in/" />
          <meta property="og:title" content="Brain Stack - Smart Education Platform" />
          <meta property="og:description" content="Access comprehensive study materials, formulas, timetables, assignments, and events. Smart education platform for students." />
-         <meta property="og:image" content="https://brainstackeducation.in/bstack.png" />
+         <meta property="og:image" content="http://brainstackeducation.in/bstack.png" />
          
          {/* Twitter */}
          <meta property="twitter:card" content="summary_large_image" />
-         <meta property="twitter:url" content="https://brainstackeducation.in/" />
+         <meta property="twitter:url" content="http://brainstackeducation.in/" />
          <meta property="twitter:title" content="Brain Stack - Smart Education Platform" />
          <meta property="twitter:description" content="Access comprehensive study materials, formulas, timetables, assignments, and events." />
-         <meta property="twitter:image" content="https://brainstackeducation.in/bstack.png" />
+         <meta property="twitter:image" content="http://brainstackeducation.in/bstack.png" />
          
          {/* Additional SEO */}
          <meta name="viewport" content="width=device-width, initial-scale=1" />
-         <link rel="canonical" href="https://brainstackeducation.in/" />
+         <link rel="canonical" href="http://brainstackeducation.in/" />
         <link rel="icon" href="/favicon.ico" />
         
         {/* Structured Data */}
@@ -116,8 +116,8 @@ export default function Home() {
               "@type": "EducationalOrganization",
               "name": "Brain Stack",
               "description": "Smart education platform providing study materials, formulas, and academic resources",
-                             "url": "https://brainstackeducation.in",
-               "logo": "https://brainstackeducation.in/bstack.png",
+                             "url": "http://brainstackeducation.in",
+               "logo": "http://brainstackeducation.in/bstack.png",
               "sameAs": [
                 "https://t.me/your-telegram",
                 "https://github.com/your-github"

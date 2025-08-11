@@ -185,21 +185,21 @@ export default function MaterialsPage() {
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-                 <meta property="og:url" content="https://brainstackeducation.in/materials" />
+                 <meta property="og:url" content="http://brainstackeducation.in/materials" />
          <meta property="og:title" content="Study Materials - Brain Stack" />
          <meta property="og:description" content="Access comprehensive study materials including notes, formulas, timetables, assignments, and events for all semesters." />
-         <meta property="og:image" content="https://brainstackeducation.in/bstack.png" />
+         <meta property="og:image" content="http://brainstackeducation.in/bstack.png" />
          
          {/* Twitter */}
          <meta property="twitter:card" content="summary_large_image" />
-         <meta property="twitter:url" content="https://brainstackeducation.in/materials" />
+         <meta property="twitter:url" content="http://brainstackeducation.in/materials" />
          <meta property="twitter:title" content="Study Materials - Brain Stack" />
          <meta property="twitter:description" content="Access comprehensive study materials including notes, formulas, timetables, assignments, and events." />
-         <meta property="twitter:image" content="https://brainstackeducation.in/bstack.png" />
+         <meta property="twitter:image" content="http://brainstackeducation.in/bstack.png" />
          
          {/* Additional SEO */}
          <meta name="viewport" content="width=device-width, initial-scale=1" />
-         <link rel="canonical" href="https://brainstackeducation.in/materials" />
+         <link rel="canonical" href="http://brainstackeducation.in/materials" />
         
         {/* Structured Data */}
         <script
@@ -210,7 +210,7 @@ export default function MaterialsPage() {
               "@type": "WebPage",
               "name": "Study Materials - Brain Stack",
               "description": "Comprehensive study materials including notes, formulas, timetables, assignments, and events",
-                             "url": "https://brainstackeducation.in/materials",
+                             "url": "http://brainstackeducation.in/materials",
                "breadcrumb": {
                  "@type": "BreadcrumbList",
                  "itemListElement": [
@@ -218,13 +218,13 @@ export default function MaterialsPage() {
                      "@type": "ListItem",
                      "position": 1,
                      "name": "Home",
-                     "item": "https://brainstackeducation.in/"
+                     "item": "http://brainstackeducation.in/"
                    },
                    {
                      "@type": "ListItem",
                      "position": 2,
                      "name": "Study Materials",
-                     "item": "https://brainstackeducation.in/materials"
+                     "item": "http://brainstackeducation.in/materials"
                    }
                  ]
                }

@@ -211,7 +211,7 @@ export default function AdminPanel() {
           <div className="p-6">
             <Link href="/" className="flex items-center text-blue-400 hover:text-blue-300 transition-colors mb-8">
               <FaArrowLeft className="mr-2" />
-              ← Back to Home
+              Back to Home
             </Link>
             
             <h1 className="text-2xl font-bold text-white mb-8">Admin Panel</h1>
