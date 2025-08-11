@@ -37,6 +37,15 @@ export default function Footer() {
       Shlok Arya <FaInstagram className="inline ml-1 text-pink-500" />
     </a>
   </li>
+  <li>
+    <a href="https://github.com/amankas864" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="hover:text-green-400 transition-colors"
+    >
+      Aman <FaGithub className="inline ml-1 text-white-500" />
+    </a>
+  </li>
 </ul>
         </div>
         {/* Connect With Me */}
