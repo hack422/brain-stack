@@ -30,17 +30,26 @@ export const uploadToCloudinary = async (file: FileObject, folder: string = 'bra
     }
     
     const base64File = fileBuffer.toString('base64');
-    const dataURI = `data:${file.mimetype || 'application/octet-stream'};base64,${base64File}`;
-    
-    // Upload to Cloudinary
+    const mimeType = file.mimetype || 'application/octet-stream';
+    const dataURI = `data:${mimeType};base64,${base64File}`;
+
+    // Decide Cloudinary resource_type to preserve original format
+    // - images => 'image'
+    // - videos => 'video'
+    // - everything else (pdf, docs, txt, etc.) => 'raw'
+    const resourceType = mimeType.startsWith('image/')
+      ? 'image'
+      : mimeType.startsWith('video/')
+        ? 'video'
+        : 'raw';
+
+    // Upload to Cloudinary without format-forcing transformations
     const result = await cloudinary.uploader.upload(dataURI, {
       folder: folder,
-      resource_type: 'auto',
-      allowed_formats: ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'txt', 'jpg', 'jpeg', 'png', 'gif', 'mp4', 'avi', 'mov'],
-      transformation: [
-        { quality: 'auto' },
-        { fetch_format: 'auto' }
-      ]
+      resource_type: resourceType,
+      use_filename: true,
+      unique_filename: true,
+      overwrite: false
     });
     
     return {
@@ -49,7 +58,7 @@ export const uploadToCloudinary = async (file: FileObject, folder: string = 'bra
       publicId: result.public_id,
       fileName: file.originalFilename || file.originalname || 'uploaded-file',
       fileSize: result.bytes,
-      mimeType: result.format
+      mimeType: mimeType
     };
   } catch (error) {
     console.error('Cloudinary upload error:', error);
