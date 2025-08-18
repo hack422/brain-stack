@@ -33,6 +33,13 @@ export const uploadToCloudinary = async (file: FileObject, folder: string = 'bra
     const mimeType = file.mimetype || 'application/octet-stream';
     const dataURI = `data:${mimeType};base64,${base64File}`;
 
+    // Derive a clean filename and extension from the original upload
+    const originalFileName = file.originalFilename || file.originalname || 'uploaded-file';
+    const dotIndex = originalFileName.lastIndexOf('.')
+    const baseName = dotIndex > 0 ? originalFileName.substring(0, dotIndex) : originalFileName;
+    const extension = dotIndex > 0 ? originalFileName.substring(dotIndex + 1) : '';
+    const sanitizedBase = baseName.replace(/[^a-zA-Z0-9-_]+/g, '_');
+
     // Decide Cloudinary resource_type to preserve original format
     // - images => 'image'
     // - videos => 'video'
@@ -44,19 +51,26 @@ export const uploadToCloudinary = async (file: FileObject, folder: string = 'bra
         : 'raw';
 
     // Upload to Cloudinary without format-forcing transformations
-    const result = await cloudinary.uploader.upload(dataURI, {
+    // For raw files (pdf/doc/etc.), set public_id with extension so the URL keeps it.
+    const uploadOptions: Record<string, unknown> = {
       folder: folder,
       resource_type: resourceType,
       use_filename: true,
       unique_filename: true,
       overwrite: false
-    });
+    };
+
+    if (resourceType === 'raw') {
+      uploadOptions.public_id = sanitizedBase + (extension ? `.${extension.toLowerCase()}` : '');
+    }
+
+    const result = await cloudinary.uploader.upload(dataURI, uploadOptions);
     
     return {
       success: true,
       url: result.secure_url,
       publicId: result.public_id,
-      fileName: file.originalFilename || file.originalname || 'uploaded-file',
+      fileName: originalFileName,
       fileSize: result.bytes,
       mimeType: mimeType
     };

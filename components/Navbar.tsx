@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FaRegStickyNote, FaVideo, FaCog, FaSignOutAlt, FaBook } from 'react-icons/fa';
+import Image from 'next/image';
 
 interface User {
   id: string;
@@ -128,9 +129,11 @@ export default function Navbar() {
                     className="flex items-center gap-2 hover:text-blue-400 transition cursor-pointer"
                   >
                     {user.picture ? (
-                      <img 
-                        src={user.picture} 
+                      <Image 
+                        src={user.picture}
                         alt={user.name}
+                        width={32}
+                        height={32}
                         className="w-8 h-8 rounded-full"
                       />
                     ) : (
@@ -146,9 +149,11 @@ export default function Navbar() {
                       <div className="px-4 py-3 border-b border-white/10">
                         <div className="flex items-center gap-3">
                           {user.picture ? (
-                            <img 
-                              src={user.picture} 
+                            <Image 
+                              src={user.picture}
                               alt={user.name}
+                              width={40}
+                              height={40}
                               className="w-10 h-10 rounded-full"
                             />
                           ) : (
@@ -186,9 +191,11 @@ export default function Navbar() {
             {isAuthenticated && user && (
               <div className="flex items-center gap-3 p-4 bg-[#181828] rounded-lg border border-white/10">
                 {user.picture ? (
-                  <img 
-                    src={user.picture} 
+                  <Image 
+                    src={user.picture}
                     alt={user.name}
+                    width={48}
+                    height={48}
                     className="w-12 h-12 rounded-full"
                   />
                 ) : (

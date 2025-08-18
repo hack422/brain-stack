@@ -5,6 +5,7 @@ import { FaSteam,FaRegComments, FaBrain, FaSyncAlt, FaTelegramPlane, FaLightbulb
 import { MdSecurity } from 'react-icons/md';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 
 // --- Data for your skills (Best Practice) ---
@@ -221,7 +222,7 @@ export default function Home() {
            {/* Right: Logo */}
            <div className="flex-1 flex justify-center lg:justify-end">
              <div className="bg-white rounded-full shadow-2xl flex items-center justify-center w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80">
-               <img src="/bstack.png" alt="Brain Stack Education" className="w-36 h-36 md:w-48 md:h-48 lg:w-60 lg:h-60 object-contain" />
+               <Image src="/bstack.png" alt="Brain Stack Education" width={240} height={240} className="w-36 h-36 md:w-48 md:h-48 lg:w-60 lg:h-60 object-contain" />
              </div>
            </div>
          </section>
