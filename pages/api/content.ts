@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Content from '../../models/Content';
+import { deleteFromCloudinary } from '../../lib/cloudinaryManagement';
 import { dbConnect } from '../../lib/mongodb';
 
 interface ContentFilter {
@@ -57,10 +58,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(404).json({ error: 'Content not found' });
       }
       
-      // TODO: Delete from Cloudinary if it's a file
-      // if (content.publicId) {
-      //   await deleteFromCloudinary(content.publicId);
-      // }
+      // Delete from Cloudinary if applicable
+      if (content.publicId) {
+        const mime = content.mimeType || '';
+        const resourceType = mime.startsWith('image/')
+          ? 'image'
+          : mime.startsWith('video/')
+            ? 'video'
+            : 'raw';
+        try {
+          await deleteFromCloudinary(content.publicId, resourceType as 'image' | 'video' | 'raw');
+        } catch (err) {
+          // Continue deletion even if Cloudinary removal fails
+          console.error('Cloudinary delete failed:', err);
+        }
+      }
       
       // Delete from database
       await Content.findByIdAndDelete(id);

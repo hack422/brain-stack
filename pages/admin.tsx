@@ -23,7 +23,7 @@ export default function AdminPanel() {
     semester: '',
     subject: '',
     contentType: 'notes' as 'notes' | 'pyq' | 'ebook' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video',
-    file: null as File | null,
+    files: [] as File[],
     videoTitle: '',
     videoUrl: ''
   });
@@ -96,10 +96,11 @@ export default function AdminPanel() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+    const selected = e.target.files ? Array.from(e.target.files) : [];
+    if (selected.length > 0) {
       setFormData(prev => ({
         ...prev,
-        file: e.target.files![0]
+        files: selected
       }));
     }
   };
@@ -111,8 +112,8 @@ export default function AdminPanel() {
     
     try {
       if (uploadType === 'file') {
-        if (!formData.file) {
-          alert('Please select a file');
+        if (!formData.files || formData.files.length === 0) {
+          alert('Please select at least one file');
           return;
         }
         
@@ -121,7 +122,9 @@ export default function AdminPanel() {
         formDataToSend.append('semester', formData.semester);
         formDataToSend.append('subject', formData.subject);
         formDataToSend.append('contentType', formData.contentType);
-        formDataToSend.append('file', formData.file);
+        for (const f of formData.files) {
+          formDataToSend.append('file', f);
+        }
         
         const response = await fetch('/api/upload', {
           method: 'POST',
@@ -131,8 +134,8 @@ export default function AdminPanel() {
         const data = await response.json();
         
         if (response.ok) {
-          alert('File uploaded successfully!');
-          setFormData({ branch: '', semester: '', subject: '', contentType: 'notes', file: null, videoTitle: '', videoUrl: '' });
+          alert('Upload completed.');
+          setFormData({ branch: '', semester: '', subject: '', contentType: 'notes', files: [], videoTitle: '', videoUrl: '' });
         } else {
           alert(`Upload failed: ${data.error}`);
         }
@@ -161,7 +164,7 @@ export default function AdminPanel() {
         
         if (response.ok) {
           alert('Video uploaded successfully!');
-          setFormData({ branch: '', semester: '', subject: '', contentType: 'notes', file: null, videoTitle: '', videoUrl: '' });
+          setFormData({ branch: '', semester: '', subject: '', contentType: 'notes', files: [], videoTitle: '', videoUrl: '' });
         } else {
           alert(`Upload failed: ${data.error}`);
         }
@@ -381,13 +384,14 @@ export default function AdminPanel() {
                   {uploadType === 'file' && (
                     <div>
                       <label htmlFor="file" className="block text-sm font-medium text-gray-300 mb-2">
-                        File *
+                        File(s) *
                       </label>
                       <div className="flex items-center space-x-4">
                         <input
                           type="file"
                           id="file"
                           name="file"
+                          multiple
                           onChange={handleFileChange}
                           className="hidden"
                           required
@@ -397,11 +401,11 @@ export default function AdminPanel() {
                           className="flex items-center px-4 py-3 bg-[#23234b] border border-blue-900/50 rounded-lg cursor-pointer hover:bg-[#2a2a5a] transition-colors text-white"
                         >
                           <FaUpload className="mr-2" />
-                          Choose file
+                          Choose files
                         </label>
-                        {formData.file && (
+                        {formData.files && formData.files.length > 0 && (
                           <span className="text-sm text-gray-400">
-                            {formData.file.name}
+                            {formData.files.length} selected
                           </span>
                         )}
                       </div>

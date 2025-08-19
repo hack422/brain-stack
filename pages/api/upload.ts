@@ -18,9 +18,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     await dbConnect();
     
     const form = formidable({
-      maxFileSize: 100 * 1024 * 1024, // 100MB limit
+      maxFileSize: 2 * 1024 * 1024 * 1024, // 2GB limit
       allowEmptyFiles: false,
-      filter: function ({mimetype}) {
+      multiples: true,
+      filter: function ({ mimetype }: { mimetype?: string | null }) {
         // Allow only specific file types
         const allowedTypes = [
           'application/pdf',
@@ -43,9 +44,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const [fields, files] = await form.parse(req);
     
     const { branch, semester, subject, contentType } = fields;
-    const file = files.file?.[0];
+    const uploadFiles = (files.file || []) as FormidableFile[];
     
-    if (!file) {
+    if (!uploadFiles || uploadFiles.length === 0) {
       return res.status(400).json({ error: 'No file uploaded or invalid file type' });
     }
     
@@ -59,48 +60,58 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     
     // Create folder structure
     const folder = `brainstack-uploads/${branch[0]}/${semester[0]}/${subject[0]}/${contentType[0]}`;
-    
-    // Coerce file properties to match expected types
-    const safeFile = {
-      ...file,
-      mimetype: file.mimetype || undefined,
-      originalFilename: file.originalFilename || undefined,
-      originalname: file.originalFilename || undefined,
-    };
-    // Upload to Cloudinary
-    const uploadResult = await uploadToCloudinary(safeFile, folder);
-    
-    if (!uploadResult.success) {
-      return res.status(500).json({ error: uploadResult.error });
-    }
-    
-    // Save to database
-    const content = new Content({
-      branch: branch[0]!,
-      semester: semester[0]!,
-      subject: subject[0]!,
-      contentType: contentType[0]!,
-      fileName: uploadResult.fileName,
-      fileUrl: uploadResult.url,
-      publicId: uploadResult.publicId,
-      fileSize: uploadResult.fileSize,
-      mimeType: uploadResult.mimeType,
-      uploadedBy: 'admin', // Get from auth later
-      uploadDate: new Date()
-    });
-    
-    await content.save();
-    
-    res.status(200).json({ 
-      message: 'File uploaded successfully', 
-      content: {
+
+    const results: Array<
+      | { success: true; id: string; fileName?: string; fileUrl?: string; fileSize?: number; mimeType?: string; contentType?: string }
+      | { success: false; error: string; fileName?: string }
+    > = [];
+
+    for (const file of uploadFiles) {
+      const safeFile = {
+        ...file,
+        mimetype: file.mimetype || undefined,
+        originalFilename: file.originalFilename || undefined,
+        originalname: file.originalFilename || undefined,
+      };
+
+      const uploadResult = await uploadToCloudinary(safeFile, folder);
+      if (!uploadResult.success) {
+        results.push({ success: false, error: uploadResult.error || 'Upload failed', fileName: file.originalFilename || undefined });
+        continue;
+      }
+
+      const content = new Content({
+        branch: branch[0]!,
+        semester: semester[0]!,
+        subject: subject[0]!,
+        contentType: contentType[0]!,
+        fileName: uploadResult.fileName,
+        fileUrl: uploadResult.url,
+        publicId: uploadResult.publicId,
+        fileSize: uploadResult.fileSize,
+        mimeType: uploadResult.mimeType,
+        uploadedBy: 'admin',
+        uploadDate: new Date()
+      });
+
+      await content.save();
+      results.push({
+        success: true,
         id: content._id,
         fileName: content.fileName,
         fileUrl: content.fileUrl,
         fileSize: content.fileSize,
         mimeType: content.mimeType,
         contentType: content.contentType
-      }
+      });
+    }
+
+    const okCount = results.filter(r => r.success).length;
+    const failCount = results.length - okCount;
+
+    res.status(okCount > 0 ? 200 : 500).json({
+      message: `Uploaded ${okCount} file(s). ${failCount > 0 ? failCount + ' failed.' : ''}`,
+      results
     });
   } catch (error) {
     console.error('Upload error:', error);

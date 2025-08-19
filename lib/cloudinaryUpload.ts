@@ -1,5 +1,5 @@
 import cloudinary from './cloudinary';
-import { readFileSync } from 'fs';
+import type { UploadApiOptions, UploadApiResponse, UploadApiErrorResponse, UploadStream } from 'cloudinary';
 
 interface FileObject {
   filepath?: string;
@@ -13,25 +13,7 @@ interface FileObject {
 
 export const uploadToCloudinary = async (file: FileObject, folder: string = 'brainstack-uploads') => {
   try {
-    // Handle different file object structures (formidable vs regular file buffer)
-    let fileBuffer: Buffer;
-    
-    if (file.filepath) {
-      // Formidable file object - read from filepath
-      fileBuffer = readFileSync(file.filepath);
-    } else if (file.buffer) {
-      // Regular file buffer
-      fileBuffer = file.buffer;
-    } else if (file.data) {
-      // Alternative buffer property
-      fileBuffer = Buffer.from(file.data);
-    } else {
-      throw new Error('Invalid file object: no buffer, filepath, or data found');
-    }
-    
-    const base64File = fileBuffer.toString('base64');
     const mimeType = file.mimetype || 'application/octet-stream';
-    const dataURI = `data:${mimeType};base64,${base64File}`;
 
     // Derive a clean filename and extension from the original upload
     const originalFileName = file.originalFilename || file.originalname || 'uploaded-file';
@@ -52,7 +34,7 @@ export const uploadToCloudinary = async (file: FileObject, folder: string = 'bra
 
     // Upload to Cloudinary without format-forcing transformations
     // For raw files (pdf/doc/etc.), set public_id with extension so the URL keeps it.
-    const uploadOptions: Record<string, unknown> = {
+    const uploadOptions: UploadApiOptions = {
       folder: folder,
       resource_type: resourceType,
       use_filename: true,
@@ -64,8 +46,37 @@ export const uploadToCloudinary = async (file: FileObject, folder: string = 'bra
       uploadOptions.public_id = sanitizedBase + (extension ? `.${extension.toLowerCase()}` : '');
     }
 
-    const result = await cloudinary.uploader.upload(dataURI, uploadOptions);
-    
+    const fileSizeBytes = file.size || 0;
+    const isLarge = fileSizeBytes > 100 * 1024 * 1024; // >100MB
+
+    let result: UploadApiResponse;
+
+    if (file.filepath) {
+      // Use chunked upload for large files or non-images; use regular upload for small images
+      if (isLarge || resourceType !== 'image') {
+        result = await (cloudinary.uploader.upload_large(file.filepath, {
+          ...uploadOptions,
+          chunk_size: 6_000_000 // 6MB chunks
+        }) as unknown as Promise<UploadApiResponse>);
+      } else {
+        result = await (cloudinary.uploader.upload(file.filepath, uploadOptions) as unknown as Promise<UploadApiResponse>);
+      }
+    } else if (file.buffer || file.data) {
+      const buffer = file.buffer || Buffer.from(file.data!);
+      result = await new Promise<UploadApiResponse>((resolve, reject) => {
+        const uploadStream: UploadStream = cloudinary.uploader.upload_stream(
+          uploadOptions,
+          (error: UploadApiErrorResponse | undefined, response: UploadApiResponse | undefined) => {
+            if (error || !response) return reject(error || new Error('Upload failed'));
+            resolve(response);
+          }
+        );
+        uploadStream.end(buffer);
+      });
+    } else {
+      throw new Error('Invalid file object: no buffer, filepath, or data found');
+    }
+
     return {
       success: true,
       url: result.secure_url,

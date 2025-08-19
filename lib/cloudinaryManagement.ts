@@ -1,9 +1,12 @@
 import cloudinary from './cloudinary';
 
 // Delete file from Cloudinary
-export const deleteFromCloudinary = async (publicId: string) => {
+export const deleteFromCloudinary = async (
+  publicId: string,
+  resourceType: 'image' | 'video' | 'raw' = 'image'
+) => {
   try {
-    const result = await cloudinary.uploader.destroy(publicId);
+    const result = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
     return { success: true, result };
   } catch (error) {
     return { 
