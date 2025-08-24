@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://www.brainstackeducation.in/</loc>
-        <lastmod>2025-01-02</lastmod>
-        <changefreq>daily</changefreq>
+        <loc>http://brainstackeducation.in</loc>
+        <lastmod>2025-08-24T07:37:35.465Z</lastmod>
+        <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
-    <!-- <url>
-        <loc>https://www.brainstackeducation.in/materials/</loc>
-        <lastmod>2025-01-02</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>1.0</priority>
-    </url> -->
+    <url>
+        <loc>http://brainstackeducation.in/materials</loc>
+        <lastmod>2025-08-24T07:37:35.466Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
 </urlset>
