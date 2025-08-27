@@ -5,7 +5,11 @@ const Sitemap = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
+<<<<<<< HEAD
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://brainstackeducation.in';
+=======
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://www.brainstackeducation.in';
+>>>>>>> 5db8cc6fd87fa4df56ec6a5c3ce73d59f38ed27a
   
   const pages = [
     '',
@@ -28,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     .join('')}
 </urlset>`;
 
-  res.setHeader('Content-Type', 'text/xml');
+  res.setHeader('Content-Type', 'application/xml');
   res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate');
   res.write(sitemap);
   res.end();
