@@ -3,6 +3,10 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const userAgent = request.headers.get('user-agent') || '';
+  
+  // Detect web crawlers/bots
+  const isCrawler = /bot|crawler|spider|crawling|googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|facebookexternalhit|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest|slackbot|vkShare|W3C_Validator/i.test(userAgent);
   
   // Public routes that don't require authentication
   const publicRoutes = [
@@ -14,12 +18,16 @@ export function middleware(request: NextRequest) {
     '/api/auth/resend-otp', 
     '/api/reset-users',
     '/sitemap.xml',
-    '/robots.txt',
-    '/'
+    '/robots.txt'
   ];
   
   // Check if the current path is a public route
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
+  
+  // Allow crawlers to access homepage for SEO
+  if (isCrawler && pathname === '/') {
+    return NextResponse.next();
+  }
   
   // Check if user is authenticated
   const authToken = request.cookies.get('auth-token');
