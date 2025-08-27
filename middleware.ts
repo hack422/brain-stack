@@ -14,7 +14,8 @@ export function middleware(request: NextRequest) {
     '/api/auth/resend-otp', 
     '/api/reset-users',
     '/sitemap.xml',
-    '/robots.txt'
+    '/robots.txt',
+    '/'
   ];
   
   // Check if the current path is a public route
