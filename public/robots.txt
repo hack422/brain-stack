@@ -2,7 +2,6 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: http://brainstackeducation.in/sitemap.xml
 
 # Disallow admin and API routes
 Disallow: /admin
