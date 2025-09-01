@@ -1,121 +1,157 @@
-## Brain Stack Education
+# Brainstack Education Platform
 
-Smart study resources for college students. Built and maintained by Pratham Khurana and Aman Kashyap.
+A comprehensive educational content management system built with Next.js, featuring file uploads, user authentication, and content organization.
 
-- **Live**: [brainstackeducation.in](https://brainstackeducation.in/)
+## Features
 
-![Homepage Screenshot](docs/homepage.png)
+- **User Authentication**: Google OAuth integration for secure login
+- **Content Management**: Upload and organize study materials by branch, semester, and subject
+- **File Support**: Upload PDFs, documents, images, and other file types with unlimited size
+- **Content Categories**: Organize content into notes, PYQs, e-books, formulas, timetables, assignments, and events
+- **Admin Panel**: Comprehensive admin interface for content management
+- **Responsive Design**: Modern, mobile-friendly UI with dark theme
 
-### About the project 🧠
+## Tech Stack
 
-**Brain Stack Education** is a student-first platform that centralizes high‑quality academic materials in one place. It provides curated notes, PYQs, formulas, timetables, assignments, events, e‑books, and video lectures with a clean, responsive UI and a simple content pipeline for admins.
+- **Frontend**: Next.js 15, React 18, TypeScript, Tailwind CSS
+- **Backend**: Next.js API routes, MongoDB with Mongoose
+- **Authentication**: Google OAuth 2.0
+- **Storage**: Cloudflare R2 for unlimited file storage
+- **Database**: MongoDB for metadata storage
+- **Deployment**: Vercel-ready configuration
 
-- **What you can do**:
-  - Browse study materials by semester and subject
-  - Watch video lectures and access e‑books
-  - Download or preview files hosted on Cloudinary
-  - Authenticate via Google and email OTP; admins can manage content
+## Prerequisites
 
-### Built With 🧰
+- Node.js 18+ and npm
+- MongoDB database
+- Google OAuth credentials
+- Cloudflare R2 account and bucket
 
-- **Next.js 15** and **React 18** (TypeScript)
-- **Tailwind CSS 4** for styling
-- **MongoDB + Mongoose** for data persistence
-- **Cloudinary** for file and media storage
-- **Nodemailer** for email OTP delivery
-- **Google OAuth 2.0** via `google-auth-library`
-- Utility libs: `formidable`/`multer` for uploads, `next-cloudinary`, `react-icons`
+## Environment Variables
 
-### Getting Started 🚀
+Create a `.env.local` file with:
 
-#### Prerequisites
-- Node.js >= 18
-- MongoDB database (Atlas or self‑hosted)
-- Cloudinary account
-- Gmail (or SMTP) account for transactional email
-
-#### 1) Clone and install
 ```bash
-git clone <your-fork-or-repo-url>
-cd brainstack
-npm install
-```
-
-#### 2) Configure environment
-Create a `.env.local` in the project root:
-```bash
-# Database
-MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>/<db>?retryWrites=true&w=majority
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-# Email (Gmail example)
-EMAIL_USER=your.email@example.com
-EMAIL_PASS=your_app_password
+# MongoDB
+MONGODB_URI=your_mongodb_connection_string
 
 # Google OAuth
-GOOGLE_CLIENT_ID=xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
+GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
+
+# Cloudflare R2
+CLOUDFLARE_ACCOUNT_ID=your_cloudflare_account_id
+CLOUDFLARE_ACCESS_KEY_ID=your_r2_access_key_id
+CLOUDFLARE_SECRET_ACCESS_KEY=your_r2_secret_access_key
+CLOUDFLARE_BUCKET_NAME=your_r2_bucket_name
+
+# Email Service (optional)
+EMAIL_HOST=your_smtp_host
+EMAIL_PORT=587
+EMAIL_USER=your_email_username
+EMAIL_PASS=your_email_password
 ```
 
-#### 3) Run the app
+## Setup Instructions
+
+### 1. Cloudflare R2 Setup
+1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
+2. Navigate to **R2 Object Storage**
+3. Create a new bucket named `brainstack-uploads`
+4. Set bucket to **Public** for direct file access
+5. Create API token with **Object Read**, **Object Write**, **Object Delete** permissions
+6. Copy your Account ID, Access Key ID, and Secret Access Key
+
+### 2. Google OAuth Setup
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing
+3. Enable Google+ API
+4. Create OAuth 2.0 credentials
+5. Add authorized redirect URIs: `http://localhost:3000/api/auth/google/callback`
+
+### 3. Installation
 ```bash
+# Clone repository
+git clone <your-repo-url>
+cd brainstack
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your credentials
+
+# Run development server
 npm run dev
-# open http://localhost:3000
 ```
 
-### Usage 📖
+## Usage
 
-- **Browse content**: Go to `/materials` and choose your semester and subject. Switch between tabs: Notes, PYQs, Formulas, Timetable, Assignments, Events, E‑Books, and Video Lectures.
-- **Authentication**: Use Google sign‑in. You’ll receive an email OTP for verification. Admins are recognized via the allow‑list in `lib/googleAuth.ts`.
-- **Admin content management**: Admins access the panel at `/admin` to upload notes, e‑books, or add YouTube videos. Files are stored on Cloudinary, and metadata is saved to MongoDB.
+### Admin Panel
+- Access `/admin` after Google login
+- Upload files with automatic R2 storage
+- Organize content by branch, semester, subject, and type
+- Manage existing content with delete functionality
 
-Core content shape stored in MongoDB:
-```ts
-type Content = {
-  branch: string
-  semester: string
-  subject: string
-  contentType: 'notes' | 'pyq' | 'formulas' | 'timetable' | 'assignments' | 'events' | 'video' | 'ebook'
-  fileName?: string
-  fileUrl?: string
-  publicId?: string
-  fileSize?: number
-  mimeType?: string
-  videoTitle?: string
-  videoUrl?: string
-  videoId?: string
-  uploadedBy: string
-  uploadDate: Date
-}
+### File Upload
+- **Unlimited file sizes** via Cloudflare R2
+- **Progress tracking** for all uploads
+- **Bulk upload** support for multiple files
+- **Automatic organization** by content type
+
+### Content Organization
+- **Branch**: CSE, CSE-AIML
+- **Semester**: 1-6
+- **Subject**: Dynamic based on branch/semester
+- **Content Type**: Notes, PYQ, E-Books, Formulas, Timetable, Assignments, Events
+
+## Deployment
+
+### Vercel
+1. Connect your GitHub repository
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
+
+### Environment Variables for Production
+Ensure all environment variables are set in your deployment platform:
+- `MONGODB_URI`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_ACCESS_KEY_ID`
+- `CLOUDFLARE_SECRET_ACCESS_KEY`
+- `CLOUDFLARE_BUCKET_NAME`
+
+## Architecture
+
+- **Frontend**: React components with TypeScript
+- **API Routes**: Next.js API endpoints for authentication and content management
+- **Database**: MongoDB with Mongoose schemas
+- **Storage**: Cloudflare R2 with presigned URLs for direct uploads
+- **Authentication**: Session-based auth with Google OAuth
+
+## File Structure
+
+```
+brainstack/
+├── components/          # React components
+├── lib/                # Utility libraries (R2, MongoDB, Auth)
+├── models/             # Mongoose schemas
+├── pages/              # Next.js pages and API routes
+├── public/             # Static assets
+└── styles/             # Global CSS
 ```
 
-### Roadmap 🗺️
+## Contributing
 
-- [ ] Public user profiles and favorites
-- [ ] Search across subjects and content types
-- [ ] Role‑based admin (editor, reviewer)
-- [ ] Rate‑limit and audit logs for content actions
-- [ ] Bulk upload and CSV import for materials
-- [ ] Accessibility and internationalization pass
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-### Project Scripts 🧪
+## License
 
-```bash
-npm run dev     # start dev server (Turbopack)
-npm run build   # production build
-npm run start   # start production server
-npm run lint    # run linter
-```
-
-### Contacts 📬
-
-- **Pratham Khurana**
-- **Aman Kashyap**
-
-For general inquiries or collaboration, please open an issue or reach out via the site: [brainstackeducation.in](https://brainstackeducation.in/).
+This project is licensed under the MIT License.
 
