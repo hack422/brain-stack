@@ -15,12 +15,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       contentType, 
       fileName, 
       fileUrl, 
-      publicId, 
+      key, // R2 key instead of publicId
       fileSize, 
       mimeType 
     } = req.body;
     
-    if (!branch || !semester || !subject || !contentType || !fileName || !fileUrl || !publicId) {
+    if (!branch || !semester || !subject || !contentType || !fileName || !fileUrl || !key) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
     
@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Invalid content type' });
     }
     
-    // Save to database
+    // Save to database with R2 key
     const content = new Content({
       branch,
       semester,
@@ -36,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       contentType,
       fileName,
       fileUrl,
-      publicId,
+      publicId: key, // Store R2 key in publicId field for compatibility
       fileSize: fileSize || 0,
       mimeType: mimeType || 'application/octet-stream',
       uploadedBy: 'admin',

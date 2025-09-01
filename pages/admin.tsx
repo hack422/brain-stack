@@ -124,53 +124,15 @@ export default function AdminPanel() {
         > = [];
         
         for (const file of formData.files) {
-          const fileSizeMB = file.size / (1024 * 1024);
-          
-          if (fileSizeMB > 10) {
-            // Large file: use direct Cloudinary upload
-            try {
-              const uploadResult = await uploadLargeFileDirectly(file);
-              results.push(uploadResult);
-            } catch (error) {
-              results.push({ 
-                success: false, 
-                error: error instanceof Error ? error.message : 'Upload failed',
-                fileName: file.name 
-              });
-            }
-          } else {
-            // Small file: use server upload
-            try {
-              const formDataToSend = new FormData();
-              formDataToSend.append('branch', formData.branch);
-              formDataToSend.append('semester', formData.semester);
-              formDataToSend.append('subject', formData.subject);
-              formDataToSend.append('contentType', formData.contentType);
-              formDataToSend.append('file', file);
-              
-              const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formDataToSend,
-              });
-              
-              const data = await response.json();
-              
-              if (response.ok && data.results && data.results.length > 0) {
-                results.push(data.results[0]);
-              } else {
-                results.push({ 
-                  success: false, 
-                  error: data.error || 'Upload failed',
-                  fileName: file.name 
-                });
-              }
-            } catch (error) {
-              results.push({ 
-                success: false, 
-                error: error instanceof Error ? error.message : 'Upload failed',
-                fileName: file.name 
-              });
-            }
+          try {
+            const uploadResult = await uploadFileDirectly(file);
+            results.push(uploadResult);
+          } catch (error) {
+            results.push({ 
+              success: false, 
+              error: error instanceof Error ? error.message : 'Upload failed',
+              fileName: file.name 
+            });
           }
         }
         
@@ -221,8 +183,8 @@ export default function AdminPanel() {
     }
   };
 
-  // Function to handle large file uploads directly to Cloudinary
-  const uploadLargeFileDirectly = async (file: File): Promise<{
+  // Function to handle file uploads directly to R2
+  const uploadFileDirectly = async (file: File): Promise<{
     success: true;
     id?: string;
     fileName?: string;
@@ -232,7 +194,7 @@ export default function AdminPanel() {
     contentType?: string;
   }> => {
     return new Promise((resolve, reject) => {
-      // Get upload signature from server
+      // Get presigned URL from server
       fetch('/api/upload-signature', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -241,26 +203,18 @@ export default function AdminPanel() {
           semester: formData.semester,
           subject: formData.subject,
           contentType: formData.contentType,
-          mimeType: file.type
+          mimeType: file.type,
+          fileName: file.name
         })
       })
       .then(res => res.json())
       .then(signatureData => {
         if (!signatureData.success) {
-          reject(new Error(signatureData.error || 'Failed to get upload signature'));
+          reject(new Error(signatureData.error || 'Failed to get upload URL'));
           return;
         }
         
-        const { uploadParams } = signatureData;
-        
-        // Create FormData for Cloudinary
-        const cloudinaryFormData = new FormData();
-        cloudinaryFormData.append('file', file);
-        
-        // Add all signed parameters
-        Object.entries(uploadParams).forEach(([key, value]) => {
-          cloudinaryFormData.append(key, value as string);
-        });
+        const { uploadUrl, key, publicUrl } = signatureData;
         
         // Use XMLHttpRequest for progress tracking
         const xhr = new XMLHttpRequest();
@@ -278,57 +232,46 @@ export default function AdminPanel() {
         
         xhr.addEventListener('load', () => {
           if (xhr.status === 200) {
-            try {
-              const uploadResult = JSON.parse(xhr.responseText);
-              
-              if (uploadResult.error) {
-                reject(new Error(uploadResult.error.message || 'Cloudinary upload failed'));
-                return;
+            // Upload successful, notify server
+            fetch('/api/upload-complete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                branch: formData.branch,
+                semester: formData.semester,
+                subject: formData.subject,
+                contentType: formData.contentType,
+                fileName: file.name,
+                fileUrl: publicUrl,
+                key: key,
+                fileSize: file.size,
+                mimeType: file.type
+              })
+            })
+            .then(res => res.json())
+            .then(completeResult => {
+              if (completeResult.success) {
+                // Clear progress
+                setUploadProgress(prev => {
+                  const newProgress = { ...prev };
+                  delete newProgress[file.name];
+                  return newProgress;
+                });
+                
+                resolve({
+                  success: true,
+                  id: completeResult.content.id,
+                  fileName: completeResult.content.fileName,
+                  fileUrl: completeResult.content.fileUrl,
+                  fileSize: completeResult.content.fileSize,
+                  mimeType: completeResult.content.mimeType,
+                  contentType: completeResult.content.contentType
+                });
+              } else {
+                reject(new Error(completeResult.error || 'Failed to complete upload'));
               }
-              
-              // Notify server that upload is complete
-              fetch('/api/upload-complete', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  branch: formData.branch,
-                  semester: formData.semester,
-                  subject: formData.subject,
-                  contentType: formData.contentType,
-                  fileName: file.name,
-                  fileUrl: uploadResult.secure_url,
-                  publicId: uploadResult.public_id,
-                  fileSize: uploadResult.bytes,
-                  mimeType: file.type
-                })
-              })
-              .then(res => res.json())
-              .then(completeResult => {
-                if (completeResult.success) {
-                  // Clear progress
-                  setUploadProgress(prev => {
-                    const newProgress = { ...prev };
-                    delete newProgress[file.name];
-                    return newProgress;
-                  });
-                  
-                  resolve({
-                    success: true,
-                    id: completeResult.content.id,
-                    fileName: completeResult.content.fileName,
-                    fileUrl: completeResult.content.fileUrl,
-                    fileSize: completeResult.content.fileSize,
-                    mimeType: completeResult.content.mimeType,
-                    contentType: completeResult.content.contentType
-                  });
-                } else {
-                  reject(new Error(completeResult.error || 'Failed to complete upload'));
-                }
-              })
-              .catch(err => reject(err));
-            } catch (_error) {
-              reject(new Error('Failed to parse upload response'));
-            }
+            })
+            .catch(err => reject(err));
           } else {
             reject(new Error(`Upload failed with status: ${xhr.status}`));
           }
@@ -338,9 +281,10 @@ export default function AdminPanel() {
           reject(new Error('Upload failed due to network error'));
         });
         
-        // Start upload
-        xhr.open('POST', `https://api.cloudinary.com/v1_1/${uploadParams.cloud_name}/${uploadParams.resource_type}/upload`);
-        xhr.send(cloudinaryFormData);
+        // Start upload to R2
+        xhr.open('PUT', uploadUrl);
+        xhr.setRequestHeader('Content-Type', file.type);
+        xhr.send(file);
       })
       .catch(err => reject(err));
     });
@@ -581,18 +525,15 @@ export default function AdminPanel() {
                       
                       {/* Info about upload methods */}
                       <div className="mt-3 text-xs text-gray-400">
-                        <p>• Files under 10MB: Uploaded via server (faster for small files)</p>
-                        <p>• Files over 10MB: Uploaded directly to Cloudinary (handles large files better)</p>
+                        <p>• All files uploaded directly to Cloudflare R2 (unlimited file size)</p>
+                        <p>• Progress tracking for all uploads</p>
                       </div>
                       
-                      {/* Progress bars for large files */}
+                      {/* Progress bars for all files */}
                       {formData.files && formData.files.length > 0 && Object.keys(uploadProgress).length > 0 && (
                         <div className="mt-4 space-y-2">
                           {formData.files.map((file) => {
                             const progress = uploadProgress[file.name] || 0;
-                            const isLarge = file.size / (1024 * 1024) > 10;
-                            
-                            if (!isLarge) return null;
                             
                             return (
                               <div key={file.name} className="bg-[#23234b] rounded-lg p-3">

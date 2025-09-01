@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Content from '../../models/Content';
-import { deleteFromCloudinary } from '../../lib/cloudinaryManagement';
 import { dbConnect } from '../../lib/mongodb';
+import { deleteFromR2 } from '../../lib/r2';
 
 interface ContentFilter {
   contentType?: string;
@@ -58,19 +58,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(404).json({ error: 'Content not found' });
       }
       
-      // Delete from Cloudinary if applicable
+      // Delete from R2 if applicable (publicId now contains R2 key)
       if (content.publicId) {
-        const mime = content.mimeType || '';
-        const resourceType = mime.startsWith('image/')
-          ? 'image'
-          : mime.startsWith('video/')
-            ? 'video'
-            : 'raw';
         try {
-          await deleteFromCloudinary(content.publicId, resourceType as 'image' | 'video' | 'raw');
+          await deleteFromR2(content.publicId);
         } catch (err) {
-          // Continue deletion even if Cloudinary removal fails
-          console.error('Cloudinary delete failed:', err);
+          // Continue deletion even if R2 removal fails
+          console.error('R2 delete failed:', err);
         }
       }
       

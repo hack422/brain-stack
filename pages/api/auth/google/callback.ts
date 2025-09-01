@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { oauth2Client, isAdminEmail } from '../../../../lib/googleAuth';
-import { generateOTP, sendOTPEmail } from '../../../../lib/emailService';
 import User from '../../../../models/User';
 import { dbConnect } from '../../../../lib/mongodb';
 
@@ -39,7 +38,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     let sessionData;
-    let emailSent = false;
 
     try {
       // Try to connect to database
@@ -56,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           picture,
           googleId,
           isAdmin: isAdminEmail(email),
-          isVerified: false
+          isVerified: true // Mark as verified immediately
         });
       } else {
         // Update existing user info
@@ -64,21 +62,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         user.picture = picture;
         user.googleId = googleId;
         user.lastLogin = new Date();
+        user.isVerified = true; // Mark as verified
       }
-
-      // Generate and send OTP
-      const otp = generateOTP();
-      const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-      user.otp = otp;
-      user.otpExpiry = otpExpiry;
 
       await user.save();
 
-      // Send OTP email
-      emailSent = await sendOTPEmail(email, otp, name);
-
-      // Store user info in session for OTP verification
+      // Store user info in session
       sessionData = {
         userId: user._id.toString(),
         email: user.email,
@@ -96,24 +85,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         name: name,
         isAdmin: isAdminEmail(email)
       };
-
-      // Generate OTP and send email even without database
-      const otp = generateOTP();
-      emailSent = await sendOTPEmail(email, otp, name);
     }
 
-    // Always set cookies and redirect, regardless of database status
-    if (emailSent) {
-      res.setHeader('Set-Cookie', [
-        `session=${JSON.stringify(sessionData)}; HttpOnly; Path=/; Max-Age=600; SameSite=Strict`,
-        `pending-auth=true; HttpOnly; Path=/; Max-Age=600; SameSite=Strict`
-      ]);
+    // Set authentication cookies and redirect to home
+    res.setHeader('Set-Cookie', [
+      `session=${JSON.stringify(sessionData)}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict`, // 24 hours
+      `authenticated=true; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict`
+    ]);
 
-      // Redirect to OTP verification page
-      res.redirect('/verify-otp');
-    } else {
-      res.status(500).json({ error: 'Failed to send verification email' });
-    }
+    // Redirect to home page (already authenticated)
+    res.redirect('/');
 
   } catch (error) {
     console.error('Google callback error:', error);
