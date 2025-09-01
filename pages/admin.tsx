@@ -18,6 +18,7 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('upload');
   const [uploadType, setUploadType] = useState<'file' | 'video'>('file');
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const [formData, setFormData] = useState({
     branch: '',
     semester: '',
@@ -117,27 +118,70 @@ export default function AdminPanel() {
           return;
         }
         
-        const formDataToSend = new FormData();
-        formDataToSend.append('branch', formData.branch);
-        formDataToSend.append('semester', formData.semester);
-        formDataToSend.append('subject', formData.subject);
-        formDataToSend.append('contentType', formData.contentType);
-        for (const f of formData.files) {
-          formDataToSend.append('file', f);
+        const results: Array<
+          | { success: true; id?: string; fileName?: string; fileUrl?: string; fileSize?: number; mimeType?: string; contentType?: string }
+          | { success: false; error: string; fileName?: string }
+        > = [];
+        
+        for (const file of formData.files) {
+          const fileSizeMB = file.size / (1024 * 1024);
+          
+          if (fileSizeMB > 10) {
+            // Large file: use direct Cloudinary upload
+            try {
+              const uploadResult = await uploadLargeFileDirectly(file);
+              results.push(uploadResult);
+            } catch (error) {
+              results.push({ 
+                success: false, 
+                error: error instanceof Error ? error.message : 'Upload failed',
+                fileName: file.name 
+              });
+            }
+          } else {
+            // Small file: use server upload
+            try {
+              const formDataToSend = new FormData();
+              formDataToSend.append('branch', formData.branch);
+              formDataToSend.append('semester', formData.semester);
+              formDataToSend.append('subject', formData.subject);
+              formDataToSend.append('contentType', formData.contentType);
+              formDataToSend.append('file', file);
+              
+              const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formDataToSend,
+              });
+              
+              const data = await response.json();
+              
+              if (response.ok && data.results && data.results.length > 0) {
+                results.push(data.results[0]);
+              } else {
+                results.push({ 
+                  success: false, 
+                  error: data.error || 'Upload failed',
+                  fileName: file.name 
+                });
+              }
+            } catch (error) {
+              results.push({ 
+                success: false, 
+                error: error instanceof Error ? error.message : 'Upload failed',
+                fileName: file.name 
+              });
+            }
+          }
         }
         
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formDataToSend,
-        });
+        const okCount = results.filter(r => r.success).length;
+        const failCount = results.length - okCount;
         
-        const data = await response.json();
-        
-        if (response.ok) {
-          alert('Upload completed.');
+        if (okCount > 0) {
+          alert(`Upload completed: ${okCount} success, ${failCount} failed`);
           setFormData({ branch: '', semester: '', subject: '', contentType: 'notes', files: [], videoTitle: '', videoUrl: '' });
         } else {
-          alert(`Upload failed: ${data.error}`);
+          alert('All uploads failed');
         }
       } else {
         // YouTube video upload
@@ -175,6 +219,131 @@ export default function AdminPanel() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Function to handle large file uploads directly to Cloudinary
+  const uploadLargeFileDirectly = async (file: File): Promise<{
+    success: true;
+    id?: string;
+    fileName?: string;
+    fileUrl?: string;
+    fileSize?: number;
+    mimeType?: string;
+    contentType?: string;
+  }> => {
+    return new Promise((resolve, reject) => {
+      // Get upload signature from server
+      fetch('/api/upload-signature', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          branch: formData.branch,
+          semester: formData.semester,
+          subject: formData.subject,
+          contentType: formData.contentType,
+          mimeType: file.type
+        })
+      })
+      .then(res => res.json())
+      .then(signatureData => {
+        if (!signatureData.success) {
+          reject(new Error(signatureData.error || 'Failed to get upload signature'));
+          return;
+        }
+        
+        const { uploadParams } = signatureData;
+        
+        // Create FormData for Cloudinary
+        const cloudinaryFormData = new FormData();
+        cloudinaryFormData.append('file', file);
+        
+        // Add all signed parameters
+        Object.entries(uploadParams).forEach(([key, value]) => {
+          cloudinaryFormData.append(key, value as string);
+        });
+        
+        // Use XMLHttpRequest for progress tracking
+        const xhr = new XMLHttpRequest();
+        
+        // Track upload progress
+        xhr.upload.addEventListener('progress', (event) => {
+          if (event.lengthComputable) {
+            const progress = (event.loaded / event.total) * 100;
+            setUploadProgress(prev => ({
+              ...prev,
+              [file.name]: progress
+            }));
+          }
+        });
+        
+        xhr.addEventListener('load', () => {
+          if (xhr.status === 200) {
+            try {
+              const uploadResult = JSON.parse(xhr.responseText);
+              
+              if (uploadResult.error) {
+                reject(new Error(uploadResult.error.message || 'Cloudinary upload failed'));
+                return;
+              }
+              
+              // Notify server that upload is complete
+              fetch('/api/upload-complete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  branch: formData.branch,
+                  semester: formData.semester,
+                  subject: formData.subject,
+                  contentType: formData.contentType,
+                  fileName: file.name,
+                  fileUrl: uploadResult.secure_url,
+                  publicId: uploadResult.public_id,
+                  fileSize: uploadResult.bytes,
+                  mimeType: file.type
+                })
+              })
+              .then(res => res.json())
+              .then(completeResult => {
+                if (completeResult.success) {
+                  // Clear progress
+                  setUploadProgress(prev => {
+                    const newProgress = { ...prev };
+                    delete newProgress[file.name];
+                    return newProgress;
+                  });
+                  
+                  resolve({
+                    success: true,
+                    id: completeResult.content.id,
+                    fileName: completeResult.content.fileName,
+                    fileUrl: completeResult.content.fileUrl,
+                    fileSize: completeResult.content.fileSize,
+                    mimeType: completeResult.content.mimeType,
+                    contentType: completeResult.content.contentType
+                  });
+                } else {
+                  reject(new Error(completeResult.error || 'Failed to complete upload'));
+                }
+              })
+              .catch(err => reject(err));
+            } catch (_error) {
+              reject(new Error('Failed to parse upload response'));
+            }
+          } else {
+            reject(new Error(`Upload failed with status: ${xhr.status}`));
+          }
+        });
+        
+        xhr.addEventListener('error', () => {
+          reject(new Error('Upload failed due to network error'));
+        });
+        
+        // Start upload
+        xhr.open('POST', `https://api.cloudinary.com/v1_1/${uploadParams.cloud_name}/${uploadParams.resource_type}/upload`);
+        xhr.send(cloudinaryFormData);
+      })
+      .catch(err => reject(err));
+    });
   };
 
   const handleTabClick = (tabName: string) => {
@@ -409,6 +578,39 @@ export default function AdminPanel() {
                           </span>
                         )}
                       </div>
+                      
+                      {/* Info about upload methods */}
+                      <div className="mt-3 text-xs text-gray-400">
+                        <p>• Files under 10MB: Uploaded via server (faster for small files)</p>
+                        <p>• Files over 10MB: Uploaded directly to Cloudinary (handles large files better)</p>
+                      </div>
+                      
+                      {/* Progress bars for large files */}
+                      {formData.files && formData.files.length > 0 && Object.keys(uploadProgress).length > 0 && (
+                        <div className="mt-4 space-y-2">
+                          {formData.files.map((file) => {
+                            const progress = uploadProgress[file.name] || 0;
+                            const isLarge = file.size / (1024 * 1024) > 10;
+                            
+                            if (!isLarge) return null;
+                            
+                            return (
+                              <div key={file.name} className="bg-[#23234b] rounded-lg p-3">
+                                <div className="flex justify-between text-sm text-gray-300 mb-1">
+                                  <span>{file.name}</span>
+                                  <span>{Math.round(progress)}%</span>
+                                </div>
+                                <div className="w-full bg-gray-700 rounded-full h-2">
+                                  <div 
+                                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                    style={{ width: `${progress}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   )}
 

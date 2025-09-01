@@ -11,6 +11,30 @@ interface FileObject {
   size?: number;
 }
 
+// Generate signed upload parameters for direct browser-to-Cloudinary uploads
+export const generateUploadSignature = (folder: string, resourceType: 'image' | 'video' | 'raw' = 'raw') => {
+  const timestamp = Math.round(new Date().getTime() / 1000);
+  
+  const params = {
+    timestamp,
+    folder,
+    resource_type: resourceType,
+    use_filename: true,
+    unique_filename: true,
+    overwrite: false
+  };
+
+  // Generate signature using Cloudinary's signing algorithm
+  const signature = cloudinary.utils.api_sign_request(params, process.env.CLOUDINARY_API_SECRET!);
+  
+  return {
+    ...params,
+    signature,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME
+  };
+};
+
 export const uploadToCloudinary = async (file: FileObject, folder: string = 'brainstack-uploads') => {
   try {
     const mimeType = file.mimetype || 'application/octet-stream';
