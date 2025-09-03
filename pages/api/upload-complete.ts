@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Content from '../../models/Content';
 import { dbConnect } from '../../lib/mongodb';
+import { getPublicUrl } from '../../lib/r2';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -28,14 +29,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Invalid content type' });
     }
     
-    // Save to database with R2 key
+    // Generate the correct public URL for the file
+    const publicFileUrl = getPublicUrl(key);
+    
+    // Save to database with R2 key and correct public URL
     const content = new Content({
       branch,
       semester,
       subject,
       contentType,
       fileName,
-      fileUrl,
+      fileUrl: publicFileUrl, // Use the correct public URL
       publicId: key, // Store R2 key in publicId field for compatibility
       fileSize: fileSize || 0,
       mimeType: mimeType || 'application/octet-stream',

@@ -16,7 +16,9 @@ export function middleware(request: NextRequest) {
     '/api/reset-users',
     '/api/upload-signature',
     '/api/upload-complete',
-    '/api/test-r2'
+    '/api/test-r2',
+    '/api/migrate-file-urls',
+    '/api/content'
   ];
   
   // Check if the current path is a public route

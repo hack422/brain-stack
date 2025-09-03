@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { generatePresignedUrl } from '../../lib/r2';
+import { generatePresignedUrl, getPublicUrl } from '../../lib/r2';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -46,7 +46,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ error: presignedResult.error });
     }
     
-    const publicUrl = `https://${process.env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com/${process.env.CLOUDFLARE_BUCKET_NAME}/${key}`;
+    // Generate the correct public URL using the public development token
+    const publicUrl = getPublicUrl(key);
     
     console.log('Successfully generated presigned URL and public URL');
     

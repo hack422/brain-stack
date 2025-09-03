@@ -60,7 +60,12 @@ export const deleteFromR2 = async (key: string) => {
 
 // Generate public URL for R2 files
 export const getPublicUrl = (key: string) => {
+  // Use the public development token for file access
+  const publicToken = process.env.CLOUDFLARE_PUBLIC_TOKEN || 'https://pub-32c3111978de41119f7e95983a0e4c38.r2.dev';
   const bucketName = process.env.CLOUDFLARE_BUCKET_NAME;
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-  return `https://${accountId}.r2.cloudflarestorage.com/${bucketName}/${key}`;
+  
+  // Remove any trailing slash from the public token
+  const cleanToken = publicToken.replace(/\/$/, '');
+  
+  return `${cleanToken}/${bucketName}/${key}`;
 };
