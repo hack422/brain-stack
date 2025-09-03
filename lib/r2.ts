@@ -18,6 +18,14 @@ export const generatePresignedUrl = async (
   contentType: string,
   expiresIn: number = 3600 // 1 hour
 ) => {
+  console.log('Generating presigned URL for:', { key, contentType, expiresIn });
+  console.log('R2 Client config:', {
+    endpoint: `https://${process.env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    bucket: process.env.CLOUDFLARE_BUCKET_NAME,
+    hasAccessKey: !!process.env.CLOUDFLARE_ACCESS_KEY_ID,
+    hasSecretKey: !!process.env.CLOUDFLARE_SECRET_ACCESS_KEY
+  });
+  
   const command = new PutObjectCommand({
     Bucket: process.env.CLOUDFLARE_BUCKET_NAME!,
     Key: key,
@@ -26,6 +34,7 @@ export const generatePresignedUrl = async (
 
   try {
     const presignedUrl = await getSignedUrl(r2Client, command, { expiresIn });
+    console.log('Successfully generated presigned URL');
     return { success: true, url: presignedUrl };
   } catch (error) {
     console.error('Error generating presigned URL:', error);

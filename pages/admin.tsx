@@ -194,6 +194,8 @@ export default function AdminPanel() {
     contentType?: string;
   }> => {
     return new Promise((resolve, reject) => {
+      console.log('Starting upload for file:', file.name, 'Size:', file.size);
+      
       // Get presigned URL from server
       fetch('/api/upload-signature', {
         method: 'POST',
@@ -207,14 +209,27 @@ export default function AdminPanel() {
           fileName: file.name
         })
       })
-      .then(res => res.json())
+      .then(res => {
+        console.log('Upload signature response status:', res.status);
+        if (!res.ok) {
+          return res.text().then(text => {
+            console.error('Upload signature error response:', text);
+            throw new Error(`Server error: ${res.status} - ${text}`);
+          });
+        }
+        return res.json();
+      })
       .then(signatureData => {
+        console.log('Upload signature data:', signatureData);
+        
         if (!signatureData.success) {
           reject(new Error(signatureData.error || 'Failed to get upload URL'));
           return;
         }
         
         const { uploadUrl, key, publicUrl } = signatureData;
+        
+        console.log('Got presigned URL, starting upload to R2');
         
         // Use XMLHttpRequest for progress tracking
         const xhr = new XMLHttpRequest();
@@ -231,7 +246,9 @@ export default function AdminPanel() {
         });
         
         xhr.addEventListener('load', () => {
+          console.log('XHR upload completed, status:', xhr.status);
           if (xhr.status === 200) {
+            console.log('Upload to R2 successful, notifying server');
             // Upload successful, notify server
             fetch('/api/upload-complete', {
               method: 'POST',
@@ -248,8 +265,18 @@ export default function AdminPanel() {
                 mimeType: file.type
               })
             })
-            .then(res => res.json())
+            .then(res => {
+              console.log('Upload complete response status:', res.status);
+              if (!res.ok) {
+                return res.text().then(text => {
+                  console.error('Upload complete error response:', text);
+                  throw new Error(`Server error: ${res.status} - ${text}`);
+                });
+              }
+              return res.json();
+            })
             .then(completeResult => {
+              console.log('Upload complete result:', completeResult);
               if (completeResult.success) {
                 // Clear progress
                 setUploadProgress(prev => {
@@ -271,22 +298,31 @@ export default function AdminPanel() {
                 reject(new Error(completeResult.error || 'Failed to complete upload'));
               }
             })
-            .catch(err => reject(err));
+            .catch(err => {
+              console.error('Upload complete error:', err);
+              reject(err);
+            });
           } else {
+            console.error('XHR upload failed with status:', xhr.status, 'Response:', xhr.responseText);
             reject(new Error(`Upload failed with status: ${xhr.status}`));
           }
         });
         
-        xhr.addEventListener('error', () => {
+        xhr.addEventListener('error', (event) => {
+          console.error('XHR upload error:', event);
           reject(new Error('Upload failed due to network error'));
         });
         
         // Start upload to R2
         xhr.open('PUT', uploadUrl);
         xhr.setRequestHeader('Content-Type', file.type);
+        console.log('Sending file to R2:', uploadUrl);
         xhr.send(file);
       })
-      .catch(err => reject(err));
+      .catch(err => {
+        console.error('Upload signature error:', err);
+        reject(err);
+      });
     });
   };
 

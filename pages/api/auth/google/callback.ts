@@ -87,10 +87,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       };
     }
 
-    // Set authentication cookies and redirect to home
+    // Set authentication cookie expected by middleware and auth/check
     res.setHeader('Set-Cookie', [
-      `session=${JSON.stringify(sessionData)}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict`, // 24 hours
-      `authenticated=true; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict`
+      `auth-token=${JSON.stringify(sessionData)}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict`
     ]);
 
     // Redirect to home page (already authenticated)
