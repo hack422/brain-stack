@@ -14,8 +14,9 @@ export function middleware(request: NextRequest) {
     '/api/auth/google', 
     '/api/auth/google/callback', 
     '/api/reset-users',
-    '/sitemap.xml',
-    '/robots.txt'
+    '/api/upload-signature',
+    '/api/upload-complete',
+    '/api/test-r2'
   ];
   
   // Check if the current path is a public route
