@@ -62,10 +62,10 @@ export const deleteFromR2 = async (key: string) => {
 export const getPublicUrl = (key: string) => {
   // Use the public development token for file access
   const publicToken = process.env.CLOUDFLARE_PUBLIC_TOKEN || 'https://pub-32c3111978de41119f7e95983a0e4c38.r2.dev';
-  const bucketName = process.env.CLOUDFLARE_BUCKET_NAME;
   
   // Remove any trailing slash from the public token
   const cleanToken = publicToken.replace(/\/$/, '');
   
-  return `${cleanToken}/${bucketName}/${key}`;
+  // The public token already points to the bucket, so we just append the key
+  return `${cleanToken}/${key}`;
 };
